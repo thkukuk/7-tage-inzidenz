@@ -2,6 +2,10 @@
 
 7-Tage-Inzidenz Anzeige für mehrere Landkreise und Städte mit Daten des RKI basierend auf dem Artikel [Corona-Ampel](https://ct.de/yw1c) in c’t 9/2021 ab Seite 160.
 
+
+![Screenshot](Screenshot.png)
+
+
 Die Beispiele sind alle mit `podman`, was aber 1:1 durch `docker` ersetzt werden kann.
 
 ## Container bauen
