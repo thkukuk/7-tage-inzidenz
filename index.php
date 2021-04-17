@@ -1,17 +1,22 @@
 <?php
 include('src/RKI_Key_Data.php');
 
-### Configure here ###
-
-# Find your AdmUnitID here:
+# Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
-$nordfriesland = 1054; // Kreis Nordfriesland
-$fuerth = 9563; //Stadt Fürth
-$nuernberg = 9564; //Stadt Nürnberg
-$muenchen = 9162; //Stadt München
-### End of configs ###
 
 ### Main ###
+
+$regions=getenv("REGIONS");
+if (!$regions) {
+  # if no region is specified, use Germany
+  $regions="0";
+}
+$reg_arr = explode(',', $regions);
+
+$past_days=getenv("PAST_DAYS");
+if (!$past_days) {
+  $past_days="7";
+}
 
 echo "<!DOCTYPE html>
       <html>
@@ -21,44 +26,30 @@ echo "<!DOCTYPE html>
       <body>";
 echo "<table>";
 echo "  <tr>";
-echo "    <td>";
-drawWideget(0);
-echo "    </td>";
-echo "    <td>";
-drawWideget($nordfriesland);
-echo "    </td>";
-echo "    <td>";
-drawWideget($fuerth);
-echo "    </td>";
-echo "    <td>";
-drawWideget($nuernberg);
-echo "    </td>";
-echo "    <td>";
-drawWideget($muenchen);
-echo "    </td>";
+
+foreach($reg_arr as $reg) {
+    echo "    <td>";
+    drawWideget($reg, $past_days);
+    echo "    </td>";
+}
+unset ($reg);
+
 echo "  </tr>";
 echo "</table>";
 echo "</body>";
 
 ### Functions ###
 
-function drawWideget($id)
+function drawWideget($id, $past_days)
 {
-    $cache_file = '/data/data-' . $id . '.json';
+    $cache_dir = '/data';
     $threshold_green = 50;
     $threshold_yellow = 100;
     $threshold_red = 200;
 
-    $incidence = new RKI_Key_Data($id, $cache_file);
+    $incidence = new RKI_Key_Data($id, $cache_dir);
 
     $today = $incidence->getDaily(0);
-    $day_1 = $incidence->getDaily(1);
-    $day_2 = $incidence->getDaily(2);
-    $day_3 = $incidence->getDaily(3);
-    $day_4 = $incidence->getDaily(4);
-    $day_5 = $incidence->getDaily(5);
-    $day_6 = $incidence->getDaily(6);
-    $day_7 = $incidence->getDaily(7);
 
     echo "<div class='widget'>";
 
@@ -68,21 +59,17 @@ function drawWideget($id)
     drawStoplight($today['Inz7T'], $threshold_green, $threshold_yellow, $threshold_red);
 
     echo "<table id='tbl_incidence'>";
-    echo drawLine($today, $day_1, $threshold_green, $threshold_yellow, $threshold_red);
-    echo drawLine($day_1, $day_2, $threshold_green, $threshold_yellow, $threshold_red);
-    echo drawLine($day_2, $day_3, $threshold_green, $threshold_yellow, $threshold_red);
-    echo drawLine($day_3, $day_4, $threshold_green, $threshold_yellow, $threshold_red);
-    echo drawLine($day_4, $day_5, $threshold_green, $threshold_yellow, $threshold_red);
-    echo drawLine($day_5, $day_6, $threshold_green, $threshold_yellow, $threshold_red);
-    echo drawLine($day_6, $day_7, $threshold_green, $threshold_yellow, $threshold_red);
-    echo drawLine($day_7, 0, $threshold_green, $threshold_yellow, $threshold_red);
-
+    echo drawLine($today, $threshold_green, $threshold_yellow, $threshold_red);
+    for ($i = 1; $i <= $past_days; $i++) {
+        $day = $incidence->getDaily($i);
+        echo drawLine($day, $threshold_green, $threshold_yellow, $threshold_red);
+    }
     echo "</table>";
     echo "<h6>Quelle: <a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a></h6>";
     echo "</div>";
 }
 
-function drawLine($data, $data_old, $threshold_green, $threshold_yellow, $threshold_red)
+function drawLine($data, $threshold_green, $threshold_yellow, $threshold_red)
 {
     if ($data) {
 

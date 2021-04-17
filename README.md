@@ -30,3 +30,10 @@ Der Container legt einen Cache an. Dieser geht verloren wenn man den Container n
 ```
 podman run -d --rm -v /srv/7-tage-inzidenz/data:/data --name 7-tage-inzidenz -p 80:80  7-tage-inzidenz:latest
 ```
+
+## Environment Variablen
+
+Die Ausgabe des Containers ist konfigurierbar:
+
+* REGIONS - Komma separatierte Liste von Regionen, die angezeigt werden soll. Die `AdmUnitID` wird dafür verwendet und kann für die Bundesländer, Landkreise und Städte [hier](https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381) gefunden werden. Ein Beispiel für die Anzeige von Deutschland, Bayern und München wäre `REGIONS=0,9,9162`, der Default ist `0`.
+* PAST_DAYS - Anzahl der vergangenen Tage, die zusätzlich zum Tagesaktuellen Ergebnis angezeigt wird. Der Default is `7`
