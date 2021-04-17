@@ -33,9 +33,9 @@ class RKI_Key_Data
 	'Name'
     ];
 
-    public function __construct(int $admunitid, string $cache_file)
+    public function __construct(int $admunitid, string $cache_dir)
     {
-        $this->cache_file = $cache_file;
+        $this->cache_file = $cache_dir . '/data-' . $admunitid . '.json';
         $this->admunit_id = $admunitid;
     }
 
