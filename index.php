@@ -55,6 +55,10 @@ function drawWideget($id, $past_days)
     $today = $incidence->getDaily(0);
     if (!$today) {
         $today = $incidence->getDaily(1);
+	if (!$today) {
+	    # No data at all, quit
+	    return;
+	}
 	$start_past = 2;
     }
 
