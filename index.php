@@ -4,6 +4,12 @@ include('src/RKI_Key_Data.php');
 # Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
 
+### Global configuration ###
+$cache_dir = '/data';
+$threshold_green = 50;
+$threshold_yellow = 100;
+$threshold_red = 200;
+
 ### Main ###
 
 $regions=getenv("REGIONS");
@@ -28,7 +34,7 @@ echo "<table>";
 echo "  <tr>";
 
 foreach($reg_arr as $reg) {
-    echo "    <td>";
+    echo "    <td id='tbl_top'>";
     drawWideget($reg, $past_days);
     echo "    </td>";
 }
@@ -42,10 +48,9 @@ echo "</body>";
 
 function drawWideget($id, $past_days)
 {
-    $cache_dir = '/data';
-    $threshold_green = 50;
-    $threshold_yellow = 100;
-    $threshold_red = 200;
+    global $cache_dir;
+
+    $today_bl = NULL;
     # if we don't have data for today, start with yesterdays data as current
     # ones.
     $start_past = 1;
@@ -62,43 +67,84 @@ function drawWideget($id, $past_days)
 	$start_past = 2;
     }
 
+    if  ($today['BundeslandId'] != '0') {
+        $incidence_bl = new RKI_Key_data($today['BundeslandId'], $cache_dir);
+	$today_bl = $incidence_bl->getDaily(0);
+        if (!$today_bl) {
+            $today_bl = $incidence_bl->getDaily(1);
+	}
+    }
+
     echo "<div class='widget'>";
 
     echo "<h3>Inzidenz für " . $today['GEN'] . "</h3>";
     echo "<h6>(Fälle pro 100.000 Einwohner in 7 Tagen)</h6>";
 
-    drawStoplight($today['Inz7T'], $threshold_green, $threshold_yellow, $threshold_red);
+    drawStoplight($today['Inz7T']);
 
     echo "<table id='tbl_incidence'>";
-    echo drawLine($today, $threshold_green, $threshold_yellow, $threshold_red);
+    echo drawLine($today);
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        echo drawLine($day, $threshold_green, $threshold_yellow, $threshold_red);
+        echo drawLine($day);
+    }
+
+    # Zeige 7-Tage-Inzidenz vom Bundesland
+    if ($today_bl) {
+        echo "<tr><td colspan='2'><h3>" . $today_bl['GEN'] . "</h3></td></tr>";
+        echo "<tr>
+	        <td id='tbl_incidence_fzt'>7-Tage-Inzidenz</td>";
+        printColorInz7T($today_bl['Inz7T'], "tbl_incidence_fzn");
+        echo "</tr>";
+    	echo "<tr>
+	        <td id='tbl_incidence_fzt'>Fälle insgesamt:</td>
+		<td id='tbl_incidence_fzn'>" . number_format($today_bl['AnzFall'], 0, ",", ".") . " (";
+	$new = $today_bl['AnzFallNeu'];
+        if ($new > 0) {
+	    echo "+";
+	} else if ($new < 0) {
+	    echo "-";
+        }
+        echo number_format($new, 0, ",", ".") . ")</td></tr>";
     }
     echo "</table>";
     echo "<h6>Quelle: <a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a></h6>";
     echo "</div>";
 }
 
-function drawLine($data, $threshold_green, $threshold_yellow, $threshold_red)
+function printColorInz7T($inz7t, $css_id = NULL)
+{
+    global $threshold_green;
+    global $threshold_yellow;
+    global $threshold_red;
+
+    $inc = round($inz7t, 2);
+    if ($inc < $threshold_green) {
+        $co = "value_ok";
+    } else if ($inc < $threshold_yellow) {
+        $co = "value_risk";
+    } else if ($inc < $threshold_red) {
+        $co = "value_stop";
+    } else {
+        $co = "value_fullstop";
+    }
+
+    echo "<td class='" . $co;
+    if ($css_id) {
+        echo "' id='" . $css_id;
+    }
+    echo "'>" . number_format($inz7t, 2, ",", ".") . "</td>";
+}
+
+function drawLine($data)
 {
     if ($data) {
 
-        $inc = round($data['Inz7T'], 2);
-        if ($inc < $threshold_green) {
-            $co = "value_ok";
-	} else if ($inc < $threshold_yellow) {
-	    $co = "value_risk";
-	} else if ($inc < $threshold_red) {
-	    $co = "value_stop";
-        } else {
-            $co = "value_fullstop";
-        }
 
         echo "<tr>
-                <td>" . germanDay($data['ts']) . ", " . date("d.m.Y", $data['ts']) . "</td>
-                <td class='" . $co . "'>" . number_format($data['Inz7T'], 2, ",", ".") . "</td>
-              </tr>
+                <td>" . germanDay($data['ts']) . ", " . date("d.m.Y", $data['ts']) . "</td>";
+	printColorInz7T($data['Inz7T']);
+        echo "</tr>
     	      <tr>
 	        <td id='tbl_incidence_fzt'>Fälle insgesamt:</td>
 		<td id='tbl_incidence_fzn'>" . number_format($data['AnzFall'], 0, ",", ".") . " (";
@@ -108,7 +154,7 @@ function drawLine($data, $threshold_green, $threshold_yellow, $threshold_red)
 	} else if ($new < 0) {
 	    echo "-";
         }
-        echo number_format($new, 0, ",", ".") . ")</td>";
+        echo number_format($new, 0, ",", ".") . ")</td></tr>";
 	echo "<tr>
 	        <td id='tbl_incidence_fzt'>Tote:</td>
 		<td id='tbl_incidence_fzn'>"
@@ -118,8 +164,12 @@ function drawLine($data, $threshold_green, $threshold_yellow, $threshold_red)
     }
 }
 
-function drawStoplight($cases7_per_100k, $threshold_green, $threshold_yellow, $threshold_red)
+function drawStoplight($cases7_per_100k)
 {
+    global $threshold_green;
+    global $threshold_yellow;
+    global $threshold_red;
+
     if ($cases7_per_100k < $threshold_green) {
         $color = "stoplight_ok";
         $text = "Geöffnet";
@@ -159,10 +209,6 @@ function germanDay($ts)
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    table td, table td * {
-        vertical-align: top;
-    }
-
     h3 {
         text-align: center;
         margin: 1%;
@@ -178,6 +224,10 @@ function germanDay($ts)
         width: 270px;
         border: thin solid #ccc;
         min-height: 200px;
+    }
+
+    #tbl_top {
+        vertical-align: top;
     }
 
     #tbl_incidence {
