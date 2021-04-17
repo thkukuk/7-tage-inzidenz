@@ -46,10 +46,17 @@ function drawWideget($id, $past_days)
     $threshold_green = 50;
     $threshold_yellow = 100;
     $threshold_red = 200;
+    # if we don't have data for today, start with yesterdays data as current
+    # ones.
+    $start_past = 1;
 
     $incidence = new RKI_Key_Data($id, $cache_dir);
 
     $today = $incidence->getDaily(0);
+    if (!$today) {
+        $today = $incidence->getDaily(1);
+	$start_past = 2;
+    }
 
     echo "<div class='widget'>";
 
@@ -60,7 +67,7 @@ function drawWideget($id, $past_days)
 
     echo "<table id='tbl_incidence'>";
     echo drawLine($today, $threshold_green, $threshold_yellow, $threshold_red);
-    for ($i = 1; $i <= $past_days; $i++) {
+    for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
         echo drawLine($day, $threshold_green, $threshold_yellow, $threshold_red);
     }
