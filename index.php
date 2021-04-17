@@ -269,7 +269,7 @@ function germanDay($ts)
     }
 
     .stoplight_stop {
-        background-color: red;
+        background-color: #ff0028;
     }
 
     .stoplight_risk {
@@ -285,11 +285,11 @@ function germanDay($ts)
     }
 
     .value_stop {
-        color: red;
+        color: #dc143c;
     }
 
     .value_risk {
-        color: #CCCC00;
+        color: #b8b800;
     }
 
     .value_ok {
