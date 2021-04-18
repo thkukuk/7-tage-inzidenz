@@ -83,10 +83,10 @@ function drawWideget($id, $past_days)
     drawStoplight($today['Inz7T']);
 
     echo "<table id='tbl_incidence'>";
-    echo drawLine($today);
+    echo drawLine($today, 1);
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        echo drawLine($day);
+        echo drawLine($day, 0);
     }
 
     # Zeige 7-Tage-Inzidenz vom Bundesland
@@ -136,10 +136,9 @@ function printColorInz7T($inz7t, $css_id = NULL)
     echo "'>" . number_format($inz7t, 2, ",", ".") . "</td>";
 }
 
-function drawLine($data)
+function drawLine($data, $show_death = 1)
 {
     if ($data) {
-
 
         echo "<tr>
                 <td>" . germanDay($data['ts']) . ", " . date("d.m.Y", $data['ts']) . "</td>";
@@ -155,12 +154,15 @@ function drawLine($data)
 	    echo "-";
         }
         echo number_format($new, 0, ",", ".") . ")</td></tr>";
-	echo "<tr>
-	        <td id='tbl_incidence_fzt'>Tote:</td>
-		<td id='tbl_incidence_fzn'>"
-                    . number_format($data['AnzTodesfall'], 0, ",", ".")
-		    . " (+" . number_format($data['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
-        echo "</tr>";
+
+        if ($show_death) {
+	    echo "<tr>
+	            <td id='tbl_incidence_fzt'>Tote:</td>
+		    <td id='tbl_incidence_fzn'>"
+                        . number_format($data['AnzTodesfall'], 0, ",", ".")
+		        . " (+" . number_format($data['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
+            echo "</tr>";
+	}
     }
 }
 
