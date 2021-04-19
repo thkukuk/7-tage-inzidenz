@@ -230,6 +230,12 @@ class RKI_Key_Data
     private function linear_regression($x, $y) {
 
         $n     = count($x);     // number of items in the array
+	if ($n < 2) {
+            return array(
+                'slope'     => 0,
+                'intercept' => 0,
+            );
+	}
         $x_sum = array_sum($x); // sum of all X values
         $y_sum = array_sum($y); // sum of all Y values
 
