@@ -19,5 +19,6 @@ COPY index.php /srv/www/htdocs/
 COPY src/ /srv/www/htdocs/src/
 COPY 80-fix-data-permissions.sh /docker-entrypoint.d/
 COPY 10-set-TZ.sh /docker-entrypoint.d/
+COPY 60-set-php-env.sh /docker-entrypoint.d/
 
 RUN mkdir -p /data && chown wwwrun:www /data
