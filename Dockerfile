@@ -5,7 +5,7 @@
 #!BuildTag: opensuse/7-tage-inzidenz:2.1-%RELEASE%
 
 #FROM opensuse/php8-nginx:latest
-FROM registry.opensuse.org/home/kukuk/container/container/opensuse/php8-nginx:latest
+FROM registry.opensuse.org/opensuse/php8-nginx:latest
 LABEL maintainer="Thorsten Kukuk <kukuk@thkukuk.de>"
 
 LABEL org.opencontainers.image.title="7-Tage-Inzidenz Container"
