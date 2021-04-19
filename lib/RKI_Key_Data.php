@@ -134,8 +134,8 @@ class RKI_Key_Data
 
         $data = $json['features'][0]['attributes'];
 
-	$name = preg_replace('/^Bundesrepublik\b/', '', $data['Name']);
-	$name = preg_replace('/^SK\b/', '', $name);
+	$name = preg_replace('/^Bundesrepublik /', '', $data['Name']);
+	$name = preg_replace('/^SK /', '', $name);
 	return $name;
     }
 
