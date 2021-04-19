@@ -181,6 +181,9 @@ class RKI_Key_Data
         $data = $json['features'][0]['attributes'];
         $data['GEN'] = $this->fetchAdmUnitName($this->admunit_id);
         $data['ts'] = $this->current_date->format("U");
+        $slr = $this->calcSlope($data['Inz7T']);
+        $data['trendSlope'] = $slr['slope'];
+        $data['trendIntercept'] = $slr['intercept'];
         $set = $this->setCache($data);
         if ($set == $dt) {
             return $data;
@@ -201,5 +204,52 @@ class RKI_Key_Data
         $old[$key] = $data;
         file_put_contents($this->cache_file, json_encode($old));
         return $key;
+    }
+
+    private function calcSlope($currInt7T) {
+        $x = [];
+	$y = [];
+
+        # use all available 7-day incidies from the last 7 days
+        for($i = 7; $i > 0; $i--) {
+            $d = new DateTime("today -" . $i . " day");
+            $dt = $d->format('Ymd');
+
+	    $data = $this->getCache($dt);
+	    if ($data) {
+	        $x[] = 8 - $i;
+	        $y[] = $data['Inz7T'];
+	    }
+	}
+	# Add 7-day incidies from today
+        $x[] = 8;
+	$y[] = $currInt7T;
+	return $this->linear_regression($x, $y);
+    }
+
+    private function linear_regression($x, $y) {
+
+        $n     = count($x);     // number of items in the array
+        $x_sum = array_sum($x); // sum of all X values
+        $y_sum = array_sum($y); // sum of all Y values
+
+        $xx_sum = 0;
+        $xy_sum = 0;
+
+        for($i = 0; $i < $n; $i++) {
+            $xy_sum += ( $x[$i]*$y[$i] );
+            $xx_sum += ( $x[$i]*$x[$i] );
+        }
+
+        // Slope
+        $slope = ( ( $n * $xy_sum ) - ( $x_sum * $y_sum ) ) / ( ( $n * $xx_sum ) - ( $x_sum * $x_sum ) );
+
+        // calculate intercept
+        $intercept = ( $y_sum - ( $slope * $x_sum ) ) / $n;
+
+        return array(
+            'slope'     => $slope,
+            'intercept' => $intercept,
+        );
     }
 }
