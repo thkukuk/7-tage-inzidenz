@@ -15,8 +15,8 @@ LABEL org.opencontainers.image.version="2.1-%RELEASE%"
 LABEL org.opencontainers.image.vendor="openSUSE Project"
 LABEL org.openbuildservice.disturl="%DISTURL%"
 
-COPY index.php /srv/www/htdocs/
-COPY src/ /srv/www/htdocs/src/
+COPY 7-tage-inzidenz.php /srv/www/htdocs/index.php
+COPY lib/ /srv/www/htdocs/lib/
 COPY 80-fix-data-permissions.sh /docker-entrypoint.d/
 COPY 10-set-TZ.sh /docker-entrypoint.d/
 COPY 60-set-php-env.sh /docker-entrypoint.d/
