@@ -83,42 +83,29 @@ function drawWideget($id, $past_days)
     drawStoplight($today['Inz7T']);
 
     echo "<table id='tbl_incidence'>";
-    echo drawLine($today, 1);
+    printEntry($today, 1, 1);
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        echo drawLine($day, 0);
+        printEntry($day, 0, 0);
     }
 
     # Zeige 7-Tage-Inzidenz vom Bundesland
     if ($today_bl) {
         echo "<tr><td colspan='2'><h3>" . $today_bl['GEN'] . "</h3></td></tr>";
-        echo "<tr>
-	        <td id='tbl_incidence_fzt'>7-Tage-Inzidenz</td>";
-        printColorInz7T($today_bl['Inz7T'], "tbl_incidence_fzn");
-        echo "</tr>";
-    	echo "<tr>
-	        <td id='tbl_incidence_fzt'>Fälle insgesamt:</td>
-		<td id='tbl_incidence_fzn'>" . number_format($today_bl['AnzFall'], 0, ",", ".") . " (";
-	$new = $today_bl['AnzFallNeu'];
-        if ($new > 0) {
-	    echo "+";
-	} else if ($new < 0) {
-	    echo "-";
-        }
-        echo number_format($new, 0, ",", ".") . ")</td></tr>";
+        printEntry($today_bl, 0, 1);
     }
     echo "</table>";
     echo "<h6>Quelle: <a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a></h6>";
     echo "</div>";
 }
 
-function printColorInz7T($inz7t, $css_id = NULL)
+function printColorInz7T($data, $trend, $css_id = NULL)
 {
     global $threshold_green;
     global $threshold_yellow;
     global $threshold_red;
 
-    $inc = round($inz7t, 2);
+    $inc = round($data['Inz7T'], 2);
     if ($inc < $threshold_green) {
         $co = "value_ok";
     } else if ($inc < $threshold_yellow) {
@@ -133,16 +120,32 @@ function printColorInz7T($inz7t, $css_id = NULL)
     if ($css_id) {
         echo "' id='" . $css_id;
     }
-    echo "'>" . number_format($inz7t, 2, ",", ".") . "</td>";
+    echo "'>&nbsp;&nbsp;&nbsp;&nbsp;" . number_format($data['Inz7T'], 2, ",", ".");
+    if ($trend) {
+        if ($data['trendSlope'] > 1) {
+            echo "<font color='red'> &nearr;</font>";
+        } else if ($data['trendSlope'] < -1) {
+            echo "<font color='green'> &searr;</font>";
+        } else {
+            echo "<font color='black'> &rarr;</font>";
+        }
+    }
+    echo "</td>";
 }
 
-function drawLine($data, $show_death = 1)
+function printEntry($data, $main, $trend)
 {
     if ($data) {
 
         echo "<tr>
-                <td>" . germanDay($data['ts']) . ", " . date("d.m.Y", $data['ts']) . "</td>";
-	printColorInz7T($data['Inz7T']);
+                <td";
+	if (!$main) { echo " id='tbl_incidence_fzt'"; }
+        echo ">" . germanDay($data['ts']) . ", " . date("d.m.Y", $data['ts']) . "</td>";
+	if ($main) {
+	    printColorInz7T($data, $trend);
+	} else {
+	    printColorInz7T($data, $trend, "tbl_incidence_fzn");
+	}
         echo "</tr>
     	      <tr>
 	        <td id='tbl_incidence_fzt'>Fälle insgesamt:</td>
@@ -155,7 +158,7 @@ function drawLine($data, $show_death = 1)
         }
         echo number_format($new, 0, ",", ".") . ")</td></tr>";
 
-        if ($show_death) {
+        if ($main) {
 	    echo "<tr>
 	            <td id='tbl_incidence_fzt'>Tote:</td>
 		    <td id='tbl_incidence_fzn'>"
@@ -223,7 +226,7 @@ function germanDay($ts)
     }
 
     .widget {
-        width: 270px;
+        width: 285px;
         border: thin solid #ccc;
         min-height: 200px;
     }
