@@ -16,9 +16,10 @@ LABEL org.opencontainers.image.vendor="openSUSE Project"
 LABEL org.openbuildservice.disturl="%DISTURL%"
 
 COPY 7-tage-inzidenz.php /srv/www/htdocs/index.php
+COPY update-data.php /usr/local/bin/update-data
 COPY lib/ /srv/www/htdocs/lib/
 COPY 80-fix-data-permissions.sh /docker-entrypoint.d/
 COPY 10-set-TZ.sh /docker-entrypoint.d/
 COPY 60-set-php-env.sh /docker-entrypoint.d/
 
-RUN mkdir -p /data && chown wwwrun:www /data
+RUN mkdir -p /data && chown wwwrun:www /data && sed -i -e 's|lib/RKI_Key_Data.php|/srv/www/htdocs/lib/RKI_Key_Data.php|g' /usr/local/bin/update-data
