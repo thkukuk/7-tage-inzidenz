@@ -16,24 +16,27 @@ if (!$regions) {
   $regions="0";
 }
 $reg_arr = explode(',', $regions);
+$d = new DateTime("today");
+$dt = $d->format('d.m.Y');
 
 foreach($reg_arr as $reg) {
     $incidence = new RKI_Key_Data($reg, $cache_dir);
     $data = $incidence->getDaily(0);
-    if ($data) {
-        echo "Updated " . $data['GEN'] . " for "
-	       . date("d.m.Y", $data['ts']) . "\n";
+    if (!$data) {
+        echo "Keine neuen Daten für Region " . $reg . " vom "
+	     . $dt . "gefunden\n";
     }
     if  ($data['BundeslandId'] != '0') {
         $incidence_bl = new RKI_Key_data($data['BundeslandId'], $cache_dir);
         $data_bl = $incidence_bl->getDaily(0);
-        if ($data_bl) {
-            echo "Updated " . $data_bl['GEN'] . " for "
-	           . date("d.m.Y", $data_bl['ts']) . "\n";
+        if (!$data_bl) {
+            echo "Keine neuen Daten für Region " . $reg . " vom "
+	         . $dt . "gefunden\n";
         }
     }
-
 }
 unset ($reg);
+
+echo "Daten für den " . $dt . " sind aktuell.\n";
 
 ?>
