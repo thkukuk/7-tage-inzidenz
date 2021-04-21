@@ -1,0 +1,23 @@
+# Comma separated list of regions to display.
+# Default is only '0' for Germany.
+REGIONS=""
+
+# Number of past days to be shown
+PAST_DAYS=""
+
+# Timezone, container defaults to Europe/Berlin
+TZ=""
+
+# Volumes to map, e.g. for persistent storage of the data
+#VOLUMES="-v /srv/7-tage-inzidenz/data:/data"
+VOLUMES=""
+
+# Port mapping, by default only port 80
+PORTS="-p 80:80"
+
+# Extra arguments for podman to start the container
+PODMAN_EXTRA_ARGS=""
+
+# If the entrypoint script should run in debug mode
+DEBUG=0
+

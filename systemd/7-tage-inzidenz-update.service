@@ -1,0 +1,20 @@
+[Unit]
+Description=Update 7-Tage-Inzidenz (Corona) database
+Documentation=https://github.com/thkukuk/7-tage-inzidenz-image#readme
+After=network-online.target local-fs.target firewalld.service
+Wants=network-online.target
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+RestartSec=1s
+StartLimitBurst=5
+TimeoutStopSec=70
+EnvironmentFile=-/usr/etc/default/7-tage-inzidenz
+EnvironmentFile=-/etc/default/7-tage-inzidenz
+ExecStartPre=/bin/rm -f %t/%n.pid %t/%n.ctr-id
+ExecStartPre=-/usr/bin/podman pull thkukuk/7-tage-inzidenz:latest
+ExecStart=/bin/sh -c "/usr/bin/podman run --conmon-pidfile %t/%n.pid --cidfile %t/%n.ctr-id --cgroups=no-conmon --replace --rm ${PODMAN_EXTRA_ARGS} ${VOLUMES} -e TZ=${TZ} -e DEBUG=${DEBUG} -e REGIONS=${REGIONS} -e PAST_DAYS=${PAST_DAYS} --name 7-tage-inzidenz-update thkukuk/7-tage-inzidenz:latest update-data"
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.ctr-id -t 10
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/%n.ctr-id
+Type=oneshot
+PIDFile=%t/%n.pid

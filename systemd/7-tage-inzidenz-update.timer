@@ -1,0 +1,10 @@
+[Unit]
+Description=Update 7-Tage-Inzidenz (Corona) database timer
+
+[Timer]
+OnCalendar=4:49,16:30
+AccuracySec=10m
+Persistent=true
+
+[Install]
+WantedBy=timers.target
