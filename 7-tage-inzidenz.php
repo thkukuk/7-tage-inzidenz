@@ -122,13 +122,17 @@ function printColorInz7T($data, $trend, $css_id = NULL)
     }
     echo "'>&nbsp;&nbsp;&nbsp;&nbsp;" . number_format($data['Inz7T'], 2, ",", ".");
     if ($trend) {
+	echo "<div class='tooltip'>";
         if ($data['trendSlope'] > 1) {
-            echo "<font color='red'> &nearr;</font>";
+            echo "  <font color='red'>&nbsp;&nearr;</font>";
         } else if ($data['trendSlope'] < -1) {
-            echo "<font color='green'> &searr;</font>";
+            echo "  <font color='green'>&nbsp;&searr;</font>";
         } else {
-            echo "<font color='black'> &rarr;</font>";
+            echo "  <font color='black'>&nbsp;&rarr;</font>";
         }
+	echo "<span class='tooltiptext'>"
+	       . number_format($data['trendSlope'], 2, ",", ".")
+	       . "</span></div>";
     }
     echo "</td>";
 }
@@ -300,5 +304,30 @@ function germanDay($ts)
     .value_ok {
         color: green;
     }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      /* border-bottom: 1px dotted black; */
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 100px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+
+      /* Position the tooltip */
+      position: absolute;
+      z-index: 1;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
 </style>
 </html>
