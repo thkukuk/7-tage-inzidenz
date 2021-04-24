@@ -123,9 +123,9 @@ function printColorInz7T($data, $trend, $css_id = NULL)
     echo "'>&nbsp;&nbsp;&nbsp;&nbsp;" . number_format($data['Inz7T'], 2, ",", ".");
     if ($trend) {
 	echo "<div class='tooltip'>";
-        if ($data['trendSlope'] > 1) {
+        if ($data['trendSlope'] > 0.8) {
             echo "  <font color='red'>&nbsp;&nearr;</font>";
-        } else if ($data['trendSlope'] < -1) {
+        } else if ($data['trendSlope'] < -0.8) {
             echo "  <font color='green'>&nbsp;&searr;</font>";
         } else {
             echo "  <font color='black'>&nbsp;&rarr;</font>";
