@@ -143,17 +143,31 @@ function printEntry($data, $main, $trend)
 
         echo "<tr>
                 <td";
-	if (!$main) { echo " id='tbl_incidence_fzt'"; }
-        echo ">" . germanDay($data['ts']) . ", " . date("d.m.Y", $data['ts']) . "</td>";
+	if ($main) {
+	    echo ">" . germanDay($data['ts']);
+	} else {
+	    echo " id='tbl_field_fzt'";
+	    echo ">" . germanDayAbbr($data['ts']);
+	}
+        echo ", " . date("d.m.Y", $data['ts']) . "</td>";
 	if ($main) {
 	    printColorInz7T($data, $trend);
 	} else {
-	    printColorInz7T($data, $trend, "tbl_incidence_fzn");
+	    printColorInz7T($data, $trend, "tbl_field_fzn");
 	}
-        echo "</tr>
-    	      <tr>
-	        <td id='tbl_incidence_fzt'>Fälle insgesamt:</td>
-		<td id='tbl_incidence_fzn'>" . number_format($data['AnzFall'], 0, ",", ".") . " (";
+        echo "</tr>";
+
+	if ($main) {
+	    $class_t = "tbl_field_txt";
+	    $class_n = "tbl_field_nr";
+	} else {
+	    $class_t = "tbl_field_fzt";
+	    $class_n = "tbl_field_fzn";
+	}
+    	echo "<tr>
+	       <td id='" . $class_t . "'>Fälle insgesamt:</td>
+               <td id='" . $class_n . "'>";
+        echo number_format($data['AnzFall'], 0, ",", ".") . " (";
 	$new = $data['AnzFallNeu'];
         if ($new > 0) {
 	    echo "+";
@@ -164,8 +178,8 @@ function printEntry($data, $main, $trend)
 
         if ($main) {
 	    echo "<tr>
-	            <td id='tbl_incidence_fzt'>Tote:</td>
-		    <td id='tbl_incidence_fzn'>"
+	            <td id='tbl_field_txt'>Tote:</td>
+		    <td id='tbl_field_nr'>"
                         . number_format($data['AnzTodesfall'], 0, ",", ".")
 		        . " (+" . number_format($data['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
             echo "</tr>";
@@ -211,6 +225,20 @@ function germanDay($ts)
     return $d[date("N", $ts)];
 }
 
+function germanDayAbbr($ts)
+{
+    $d = [
+        1 => "Mo",
+        2 => "Di",
+        3 => "Mi",
+        4 => "Do",
+        5 => "Fr",
+        6 => "Sa",
+        7 => "So"
+    ];
+    return $d[date("N", $ts)];
+}
+
 ?>
 <style>
     body,
@@ -249,14 +277,24 @@ function germanDay($ts)
         border-bottom: thin solid #ccc;
     }
 
-    #tbl_incidence_fzt {
-        width: 100%;
+    #tbl_field_txt {
+        width: 50%;
+	text-align: left;
+    }
+
+    #tbl_field_nr {
+        width: 50%;
+	text-align: right;
+    }
+
+    #tbl_field_fzt {
+        width: 50%;
         font-size: 0.9em;
 	text-align: left;
     }
 
-    #tbl_incidence_fzn {
-        width: 100%;
+    #tbl_field_fzn {
+        width: 50%;
         font-size: 0.9em;
 	text-align: right;
     }
@@ -313,7 +351,7 @@ function germanDay($ts)
 
     .tooltip .tooltiptext {
       visibility: hidden;
-      width: 100px;
+      width: 50px;
       background-color: black;
       color: #fff;
       text-align: center;
