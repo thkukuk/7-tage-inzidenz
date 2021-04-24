@@ -8,7 +8,7 @@ include('lib/RKI_Key_Data.php');
 $cache_dir = '/data';
 $threshold_green = 50;
 $threshold_yellow = 100;
-$threshold_red = 200;
+$threshold_red = 150;
 
 ### Main ###
 
