@@ -31,6 +31,8 @@ Der Container legt einen Cache an. Dieser geht verloren wenn man den Container n
 podman run -d --rm -v /srv/7-tage-inzidenz/data:/data --name 7-tage-inzidenz -p 80:80  7-tage-inzidenz:latest
 ```
 
+Um sich die Seite anzeigen zu lassen, gehe auf `http://localhost`.
+
 ## Environment Variablen
 
 Die Ausgabe des Containers ist konfigurierbar:
