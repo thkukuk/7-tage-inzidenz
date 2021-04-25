@@ -83,7 +83,7 @@ class RKI_Key_Data
             $c,
             CURLOPT_URL,
 	    'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/rki_data_status_v/FeatureServer/0/query?where=1%3D1&outFields='
-	    . $fieldstr . '&outSR=4326&f=json'
+	    . $fieldstr . '&returnGeometry=false&outSR=&f=json'
         );
 
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
@@ -115,7 +115,7 @@ class RKI_Key_Data
             $c,
             CURLOPT_URL,
 	    'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/rki_admunit_v/FeatureServer/0/query?where=AdmUnitId='
-	    . $admunit_id . '&outFields=' . $fieldstr . '&outSR=4326&f=json'
+	    . $admunit_id . '&outFields=' . $fieldstr . '&returnGeometry=false&outSR=&f=json'
         );
 
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
@@ -161,7 +161,7 @@ class RKI_Key_Data
             $c,
             CURLOPT_URL,
 	    'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/rki_key_data_hubv/FeatureServer/0/query?where=AdmUnitId='
-                . $this->admunit_id . '&outFields=' . $fieldstr . '&returnGeometry=false&outSR=4326&f=json'
+                . $this->admunit_id . '&outFields=' . $fieldstr . '&returnGeometry=false&outSR=&f=json'
         );
 
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
