@@ -12,3 +12,7 @@ fi
 if [ -n "${PAST_DAYS}" ]; then
         echo "env[PAST_DAYS] = ${PAST_DAYS}" >> /etc/php8/fpm/php-fpm.d/www.conf
 fi
+
+if [ -n "${MAX_COLS}" ]; then
+        echo "env[MAX_COLS] = ${MAX_COLS}" >> /etc/php8/fpm/php-fpm.d/www.conf
+fi

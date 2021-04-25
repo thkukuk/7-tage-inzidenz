@@ -1,8 +1,8 @@
 # Defines the tag for OBS and build script builds:
 #!BuildTag: opensuse/7-tage-inzidenz:latest
 #!BuildTag: opensuse/7-tage-inzidenz:2
-#!BuildTag: opensuse/7-tage-inzidenz:2.3
-#!BuildTag: opensuse/7-tage-inzidenz:2.3-%RELEASE%
+#!BuildTag: opensuse/7-tage-inzidenz:2.4
+#!BuildTag: opensuse/7-tage-inzidenz:2.4-%RELEASE%
 
 #FROM opensuse/php8-nginx:latest
 FROM registry.opensuse.org/opensuse/php8-nginx:latest
@@ -11,7 +11,7 @@ LABEL maintainer="Thorsten Kukuk <kukuk@thkukuk.de>"
 LABEL org.opencontainers.image.title="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.description="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
-LABEL org.opencontainers.image.version="2.3-%RELEASE%"
+LABEL org.opencontainers.image.version="2.4-%RELEASE%"
 LABEL org.opencontainers.image.vendor="openSUSE Project"
 LABEL org.openbuildservice.disturl="%DISTURL%"
 
