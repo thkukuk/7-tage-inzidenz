@@ -23,6 +23,10 @@ $past_days=getenv("PAST_DAYS");
 if (!$past_days) {
   $past_days="7";
 }
+$max_cols=GETENV("MAX_COLS");
+if (!$max_cols) {
+  $max_cols="5";
+}
 
 echo "<!DOCTYPE html>
       <html>
@@ -33,12 +37,23 @@ echo "<!DOCTYPE html>
 echo "<table>";
 echo "  <tr>";
 
+$cols = 0;
 foreach($reg_arr as $reg) {
+    $cols++;
     echo "    <td id='tbl_top'>";
     drawWideget($reg, $past_days);
     echo "    </td>";
+    if ($cols == $max_cols) {
+        echo "  </tr><tr>";
+	$cols = 0;
+    }
 }
 unset ($reg);
+for ($i = $cols+1; $i <= $max_cols; $i++) {
+    echo "<td>&nbsp;</td>";
+}
+echo "</tr><tr>";
+echo "<td colspan='" . $max_cols . "'>Source Code: <a href='https://github.com/thkukuk/7-tage-inzidenz'>https://github.com/thkukuk/7-tage-inzidenz</a></td>";
 
 echo "  </tr>";
 echo "</table>";
@@ -144,14 +159,14 @@ function printEntry($data, $main, $trend)
         echo "<tr>
                 <td";
 	if ($main) {
-	    echo ">" . germanDay($data['ts']);
+	    echo " id='tbl_field_date'>" . germanDay($data['ts']);
 	} else {
-	    echo " id='tbl_field_fzt'";
-	    echo ">" . germanDayAbbr($data['ts']);
+	    echo " id='tbl_field_fzt'>";
+	    echo germanDayAbbr($data['ts']);
 	}
         echo ", " . date("d.m.Y", $data['ts']) . "</td>";
 	if ($main) {
-	    printColorInz7T($data, $trend);
+	    printColorInz7T($data, $trend, "tbl_field_7ti");
 	} else {
 	    printColorInz7T($data, $trend, "tbl_field_fzn");
 	}
@@ -275,6 +290,18 @@ function germanDayAbbr($ts)
     #tbl_incidence td {
         width: 50%;
         border-bottom: thin solid #ccc;
+    }
+
+    #tbl_field_date {
+        width: 50%;
+	text-align: center;
+	font-size: 1.2em;
+    }
+
+    #tbl_field_7ti {
+        width: 50%;
+	text-align: center;
+	font-size: 1.2em;
     }
 
     #tbl_field_txt {
