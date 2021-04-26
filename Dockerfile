@@ -4,7 +4,6 @@
 #!BuildTag: opensuse/7-tage-inzidenz:2.4
 #!BuildTag: opensuse/7-tage-inzidenz:2.4-%RELEASE%
 
-#FROM opensuse/php8-nginx:latest
 FROM registry.opensuse.org/opensuse/php8-nginx:latest
 LABEL maintainer="Thorsten Kukuk <kukuk@thkukuk.de>"
 
