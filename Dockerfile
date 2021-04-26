@@ -21,4 +21,4 @@ COPY 80-fix-data-permissions.sh /docker-entrypoint.d/
 COPY 10-set-TZ.sh /docker-entrypoint.d/
 COPY 60-set-php-env.sh /docker-entrypoint.d/
 
-RUN mkdir -p /data && chown wwwrun:www /data && sed -i -e 's|lib/RKI_Corona_Data.php|/srv/www/htdocs/lib/RKI_Corona_Data.php|g' /usr/local/bin/update-data
+RUN mkdir -p /data && chown wwwrun:www /data && sed -i -e 's|lib/RKI_Corona_Data.php|/srv/www/htdocs/lib/RKI_Corona_Data.php|g' -e 's|lib/RKI_Vaccination.php|/srv/www/htdocs/lib/RKI_Vaccination.php|g' /usr/local/bin/update-data

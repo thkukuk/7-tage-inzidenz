@@ -1,5 +1,6 @@
 <?php
 include('lib/RKI_Corona_Data.php');
+include('lib/RKI_Vaccination.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
@@ -28,6 +29,9 @@ if (!$max_cols) {
   $max_cols="5";
 }
 
+$vaccination_class = new RKI_Vaccination($cache_dir);
+$vaccination = $vaccination_class->getCurrent();
+
 echo "<!DOCTYPE html>
       <html>
       <head>
@@ -41,7 +45,7 @@ $cols = 0;
 foreach($reg_arr as $reg) {
     $cols++;
     echo "    <td id='tbl_top'>";
-    drawWideget($reg, $past_days);
+    drawWideget($reg, $past_days, $vaccination);
     echo "    </td>";
     if ($cols == $max_cols) {
         echo "  </tr><tr>";
@@ -61,7 +65,7 @@ echo "</body>";
 
 ### Functions ###
 
-function drawWideget($id, $past_days)
+function drawWideget($id, $past_days, $vaccination)
 {
     global $cache_dir;
 
@@ -83,11 +87,21 @@ function drawWideget($id, $past_days)
     }
 
     if  ($today['BundeslandId'] != '0') {
-        $incidence_bl = new RKI_Corona_data($today['BundeslandId'], $cache_dir);
+        $incidence_bl = new RKI_Corona_Data($today['BundeslandId'], $cache_dir);
 	$today_bl = $incidence_bl->getDaily(0);
         if (!$today_bl) {
             $today_bl = $incidence_bl->getDaily(1);
 	}
+    }
+
+    # If the big widget is a "Bundesland" or "Germany", show
+    # vaccination status
+    if ($id == 0) {
+        $vacc = $vaccination;
+    } else if ($id <= 16) {
+        $vacc = $vaccination['states'][$today['GEN']];
+    } else {
+        $vacc = NULL;
     }
 
     echo "<div class='widget'>";
@@ -98,16 +112,16 @@ function drawWideget($id, $past_days)
     drawStoplight($today['Inz7T']);
 
     echo "<table id='tbl_incidence'>";
-    printEntry($today, 1, 1);
+    printEntry($today, 1, 1, $vacc);
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        printEntry($day, 0, 0);
+        printEntry($day, 0, 0, $vacc);
     }
 
     # Zeige 7-Tage-Inzidenz vom Bundesland
     if ($today_bl) {
         echo "<tr><td colspan='2'><h3>" . $today_bl['GEN'] . "</h3></td></tr>";
-        printEntry($today_bl, 0, 1);
+        printEntry($today_bl, 0, 1, $vaccination['states'][$today_bl['GEN']]);
     }
     echo "</table>";
     echo "<h6>Quelle: <a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a></h6>";
@@ -152,7 +166,7 @@ function printColorInz7T($data, $trend, $css_id = NULL)
     echo "</td>";
 }
 
-function printEntry($data, $main, $trend)
+function printEntry($data, $main, $trend, $vaccination)
 {
     if ($data) {
 
@@ -198,6 +212,15 @@ function printEntry($data, $main, $trend)
                         . number_format($data['AnzTodesfall'], 0, ",", ".")
 		        . " (+" . number_format($data['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
             echo "</tr>";
+	}
+        if ($vaccination) {
+	    echo "<tr>
+	            <td id='" . $class_t . "'>Impfquote:</td>
+	            <td id='" . $class_n . "'>"
+	                . $vaccination['quote'] . "% / "
+		        . $vaccination['2nd_vaccination']['quote']
+                        . "%</td>
+		  </tr>";
 	}
     }
 }

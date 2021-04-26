@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 include('lib/RKI_Corona_Data.php');
+include('lib/RKI_Vaccination.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
@@ -9,6 +10,11 @@ include('lib/RKI_Corona_Data.php');
 $cache_dir = '/data';
 
 ### Main ###
+
+$vaccination_class = new RKI_Vaccination($cache_dir);
+$vaccination = $vaccination_class->getCurrent();
+
+echo "RKI Impfquoten Daten sind vom " . date("d.m.Y", $vaccination['ts']) . "\n";
 
 $regions=getenv("REGIONS");
 if (!$regions) {
@@ -27,7 +33,7 @@ foreach($reg_arr as $reg) {
 	     . $dt . "gefunden\n";
     }
     if  ($data['BundeslandId'] != '0') {
-        $incidence_bl = new RKI_Corona_data($data['BundeslandId'], $cache_dir);
+        $incidence_bl = new RKI_Corona_Data($data['BundeslandId'], $cache_dir);
         $data_bl = $incidence_bl->getDaily(0);
         if (!$data_bl) {
             echo "Keine neuen Daten für Region " . $reg . " vom "
@@ -37,6 +43,6 @@ foreach($reg_arr as $reg) {
 }
 unset ($reg);
 
-echo "Daten für den " . $dt . " sind aktuell.\n";
+echo "RKI Corona Daten sind vom " . $dt . "\n";
 
 ?>

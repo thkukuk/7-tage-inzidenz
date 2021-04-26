@@ -1,8 +1,11 @@
 # 7-Tage-Inzidenz (Corona) Anzeige mit PHP als Container
 
-7-Tage-Inzidenz (Corona) Anzeige für Deutschland, dessen Bundesländer sowie
-Landkreise  und Städte mit Daten des RKI. Die Idee und Codeteile basieren auf
-dem Artikel [Corona-Ampel](https://ct.de/yw1c) in c’t 9/2021 ab Seite 160.
+Dieser Container stellt einen Webserver mit einer PHP generierten Webseite mit
+der 7-Tage-Inzidenz (Corona) sowie der Impfquote für Deutschland, den
+Bundesländern sowie Landkreisen und Städten zur Verfügung. Welche angezeigt
+werden ist konfigurierbar.
+Die Idee und Codeteile basieren auf dem Artikel
+[Corona-Ampel](https://ct.de/yw1c) in c’t 9/2021 ab Seite 160.
 
 ![Screenshot](Screenshot.png)
 
@@ -17,6 +20,7 @@ werden kann.
 Der Code besteht aus mehreren Teilen:
 
 * **lib/RKI_Corona_Data.php**: Eine PHP Klassenbibliothek, welche die Daten aus verschiedenen APIs des RKI zusammensucht und verarbeitet. Die Daten werden in einem Cache gespeichert.
+* **lib/RKI_Vaccination.php**: Eine PHP Klassenbibliothek, welche die Impfquoten für Deutschland und die Bundesländer zur Verfügung stellt.
 * **7-tage-inzidenz.php** generiert eine Webseite mit den aktuellen Daten.
 * **update-data.php** ist ein Skript um den lokalen Cache upzudaten.
 
@@ -41,7 +45,7 @@ Der Container legt einen Cache an. Dieser geht verloren wenn man den Container n
 podman run -d --rm -v /srv/7-tage-inzidenz/data:/data --name 7-tage-inzidenz -p 80:80  7-tage-inzidenz:latest
 ```
 
-Um sich die Seite anzeigen zu lassen, gehe auf `http://localhost`.
+Die Webseite ist unter `http://<rechnername>/` erreichbar.
 
 ## Environment Variablen
 
