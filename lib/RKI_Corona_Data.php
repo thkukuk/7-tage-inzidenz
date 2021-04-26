@@ -2,7 +2,7 @@
 
 # https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/c2f3c3b935a242169c6bec82e1fa573e_0
 
-class RKI_Key_Data
+class RKI_Corona_Data
 {
 
     private $cache_file;

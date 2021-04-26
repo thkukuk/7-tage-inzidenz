@@ -1,5 +1,5 @@
 <?php
-include('lib/RKI_Key_Data.php');
+include('lib/RKI_Corona_Data.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
@@ -70,7 +70,7 @@ function drawWideget($id, $past_days)
     # ones.
     $start_past = 1;
 
-    $incidence = new RKI_Key_Data($id, $cache_dir);
+    $incidence = new RKI_Corona_Data($id, $cache_dir);
 
     $today = $incidence->getDaily(0);
     if (!$today) {
@@ -83,7 +83,7 @@ function drawWideget($id, $past_days)
     }
 
     if  ($today['BundeslandId'] != '0') {
-        $incidence_bl = new RKI_Key_data($today['BundeslandId'], $cache_dir);
+        $incidence_bl = new RKI_Corona_data($today['BundeslandId'], $cache_dir);
 	$today_bl = $incidence_bl->getDaily(0);
         if (!$today_bl) {
             $today_bl = $incidence_bl->getDaily(1);

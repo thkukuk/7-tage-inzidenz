@@ -16,7 +16,7 @@ werden kann.
 
 Der Code besteht aus mehreren Teilen:
 
-* **lib/RKI_Key_Data.php**: Eine PHP Klassenbibliothek, welche die Daten aus verschiedenen APIs des RKI zusammensucht und verarbeitet. Die Daten werden in einem Cache gespeichert.
+* **lib/RKI_Corona_Data.php**: Eine PHP Klassenbibliothek, welche die Daten aus verschiedenen APIs des RKI zusammensucht und verarbeitet. Die Daten werden in einem Cache gespeichert.
 * **7-tage-inzidenz.php** generiert eine Webseite mit den aktuellen Daten.
 * **update-data.php** ist ein Skript um den lokalen Cache upzudaten.
 
