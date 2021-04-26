@@ -115,7 +115,7 @@ function drawWideget($id, $past_days, $vaccination)
     printEntry($today, 1, 1, $vacc);
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        printEntry($day, 0, 0, $vacc);
+        printEntry($day, 0, 0, NULL);
     }
 
     # Zeige 7-Tage-Inzidenz vom Bundesland
