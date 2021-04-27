@@ -33,22 +33,23 @@ $vaccination_class = new RKI_Vaccination($cache_dir);
 $vaccination = $vaccination_class->getCurrent();
 
 echo "<!DOCTYPE html>
-      <html>
-      <head>
-      <title>7 Tage Inzidenzen</title>
-      </head>
-      <body>";
-echo "<table>";
-echo "  <tr>";
+      <html lang='de'>
+        <head>
+          <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+          <title>7 Tage Inzidenzen</title>
+        </head>
+        <body>";
+echo "    <table>";
+echo "      <tr>";
 
 $cols = 0;
 foreach($reg_arr as $reg) {
     $cols++;
-    echo "    <td id='tbl_top'>";
-    drawWideget($reg, $past_days, $vaccination);
-    echo "    </td>";
+    echo "      <td id='tbl_top'>";
+    drawWidget($reg, $past_days, $vaccination);
+    echo "      </td>";
     if ($cols == $max_cols) {
-        echo "  </tr><tr>";
+        echo "    </tr><tr>";
 	$cols = 0;
     }
 }
@@ -65,7 +66,7 @@ echo "</body>";
 
 ### Functions ###
 
-function drawWideget($id, $past_days, $vaccination)
+function drawWidget($id, $past_days, $vaccination)
 {
     global $cache_dir;
 
