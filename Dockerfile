@@ -16,6 +16,7 @@ LABEL org.openbuildservice.disturl="%DISTURL%"
 
 COPY 7-tage-inzidenz.php /srv/www/htdocs/index.php
 COPY update-data.php /usr/local/bin/update-data
+COPY vaccination.php /srv/www/htdocs/
 COPY lib/ /srv/www/htdocs/lib/
 COPY 80-fix-data-permissions.sh /docker-entrypoint.d/
 COPY 10-set-TZ.sh /docker-entrypoint.d/
