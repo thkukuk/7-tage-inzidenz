@@ -34,27 +34,31 @@ echo "<!DOCTYPE html>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
     <title>Corona Impfquoten</title>
     <style>
-#customers {
+
+body, html {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+table {
   border-collapse: collapse;
   border: 1px solid black;
   /* width: 100%; */
 }
 
-#customers td {
+td {
   border: 1px solid #ddd;
   padding: 5px;
   text-align: right;
 }
 
-#customers td.text { text-align: left; }
-#customers td.perc { text-align: center; }
+td.text { text-align: left; }
+td.perc { text-align: center; }
 
-#customers tr:nth-child(even){background-color: #f2f2f2;}
+tr:nth-child(even){background-color: #f2f2f2;}
 
-#customers tr:hover {background-color: #ddd;}
+tr:hover {background-color: #ddd;}
 
-#customers th {
+th {
   border: 1px solid #ddd;
   padding: 5px;
   padding-top: 10px;
@@ -63,11 +67,24 @@ echo "<!DOCTYPE html>
   background-color: grey;
   color: white;
 }
+
+.quote_low {
+  color: #dc143c;
+}
+
+.quote_medium {
+  color: #b8b800;
+}
+
+.quote_good {
+  color: green;
+}
+
     </style>
   </head>
   <body>";
 echo "<h1>Gegen Corona geimpfte Personen in Deutschland</h1>\n";
-echo "<table id='customers'>";
+echo "<table>";
 echo "  <tr>";
 echo "    <th>&nbsp;</th><th>1./2. Impfung</th><th>Gesamt 1.</th><th>Neu 1.</th><th>Gesamt 2.</th><th>Neu 2.</th><th>Einwohner</th>";
 echo "  </tr>";
@@ -86,11 +103,26 @@ echo "</html>";
 
 ### Functions ###
 
+function printColPercNr($quote) {
+    if ($quote >= 70) {
+        $color = "quote_good";
+    } else if ($quote >= 50) {
+        $color = "quote_medium";
+    } else {
+        $color = "quote_low";
+    }
+
+    #echo "<span style='color:#dc143c'>";
+    echo "<span class='" . $color . "'>";
+    echo number_format($quote, 2, ",", ".");
+    echo "%</span>";
+}
+
 function printEntry($state, $data)
 {
     echo "<tr><td class='text'>$state</td><td class='perc'>";
-    echo number_format($data['quote'], 2) . "% / ";
-    echo number_format($data['2nd_vaccination']['quote'], 2) . "%</td>";
+    echo printColPercNr($data['quote']) . " / ";
+    echo printColPercNr($data['2nd_vaccination']['quote']) . "</td>";
     echo "<td>" . number_format($data['vaccinated'], 0, ",", ".") . "</td>";
     echo "<td> +" . number_format($data['difference_to_the_previous_day'], 0, ",", ".") . "</td>";
     echo "<td>" . number_format($data['2nd_vaccination']['vaccinated'], 0, ",", ".") . "</td>";
