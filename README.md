@@ -7,10 +7,12 @@ werden ist konfigurierbar.
 Die Idee und Codeteile basieren auf dem Artikel
 [Corona-Ampel](https://ct.de/yw1c) in c’t 9/2021 ab Seite 160.
 
-![Screenshot](Screenshot.png)
+![Screenshot1](Screenshot1.png)
 
 Die Ampel für Geschäfte basiert auf vereinfachten Regeln, da diese für viele
 Bundesländer unterschiedlich sind.
+
+![Screenshot2](Screenshot2.png)
 
 Die Beispiele sind alle mit `podman`, was aber 1:1 durch `docker` ersetzt
 werden kann.
