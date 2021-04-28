@@ -41,12 +41,12 @@ body, html {
 
 table {
   border-collapse: collapse;
-  border: 1px solid black;
+  border: thin solid #ddd;
   /* width: 100%; */
 }
 
 td {
-  border: 1px solid #ddd;
+  border: thin solid #ddd;
   padding: 5px;
   text-align: right;
 }
@@ -112,7 +112,6 @@ function printColPercNr($quote) {
         $color = "quote_low";
     }
 
-    #echo "<span style='color:#dc143c'>";
     echo "<span class='" . $color . "'>";
     echo number_format($quote, 2, ",", ".");
     echo "%</span>";
