@@ -14,7 +14,7 @@ Bundesländer unterschiedlich sind.
 
 ![Screenshot2](Screenshot2.png)
 
-Die Beispiele sind alle mit `podman`, was aber 1:1 durch `docker` ersetzt
+Die folgendenh Beispiele sind alle mit `podman`, was aber 1:1 durch `docker` ersetzt
 werden kann.
 
 ## Source Code
