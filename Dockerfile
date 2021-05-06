@@ -4,7 +4,7 @@ LABEL maintainer="Thorsten Kukuk <kukuk@thkukuk.de>"
 LABEL org.opencontainers.image.title="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.description="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
-LABEL org.opencontainers.image.version="2.6"
+LABEL org.opencontainers.image.version="2.7"
 
 COPY lib/ /srv/www/htdocs/lib/
 COPY 7-tage-inzidenz.php vaccination.php index.html /srv/www/htdocs/
