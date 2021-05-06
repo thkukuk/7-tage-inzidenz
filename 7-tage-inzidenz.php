@@ -78,7 +78,7 @@ echo "<!DOCTYPE html>
 	border-top: thin solid #ddd;
     }
 
-    table.tbl_incidence tr:nth-child(odd) {
+    table.tbl_incidence tr:nth-child(even) {
         background-color: #f2f2f2;
     }
 

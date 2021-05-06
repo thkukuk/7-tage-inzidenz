@@ -54,7 +54,7 @@ td {
 td.text { text-align: left; }
 td.perc { text-align: center; }
 
-tr:nth-child(even){background-color: #f2f2f2;}
+tr:nth-child(odd){background-color: #f2f2f2;}
 
 tr:hover {background-color: #ddd;}
 
