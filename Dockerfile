@@ -6,12 +6,9 @@ LABEL org.opencontainers.image.description="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
 LABEL org.opencontainers.image.version="2.6"
 
-COPY 7-tage-inzidenz.php /srv/www/htdocs/index.php
-COPY update-data.php /usr/local/bin/update-data
-COPY vaccination.php /srv/www/htdocs/
 COPY lib/ /srv/www/htdocs/lib/
-COPY 80-fix-data-permissions.sh /docker-entrypoint.d/
-COPY 10-set-TZ.sh /docker-entrypoint.d/
-COPY 60-set-php-env.sh /docker-entrypoint.d/
+COPY 7-tage-inzidenz.php vaccination.php index.html /srv/www/htdocs/
+COPY update-data.php /usr/local/bin/update-data
+COPY 10-set-TZ.sh 60-set-php-env.sh 80-fix-data-permissions.sh /docker-entrypoint.d/
 
-RUN mkdir -p /data && chown wwwrun:www /data && sed -i -e 's|lib/RKI_Corona_Data.php|/srv/www/htdocs/lib/RKI_Corona_Data.php|g' -e 's|lib/RKI_Vaccination.php|/srv/www/htdocs/lib/RKI_Vaccination.php|g' /usr/local/bin/update-data
+RUN rm /srv/www/htdocs/index.php && mkdir -p /data && chown wwwrun:www /data && sed -i -e 's|lib/RKI_Corona_Data.php|/srv/www/htdocs/lib/RKI_Corona_Data.php|g' -e 's|lib/RKI_Vaccination.php|/srv/www/htdocs/lib/RKI_Vaccination.php|g' /usr/local/bin/update-data
