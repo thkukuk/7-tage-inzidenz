@@ -2,7 +2,7 @@
 Description=Update 7-Tage-Inzidenz (Corona) database timer
 
 [Timer]
-OnCalendar=4:49,16:30,22:30
+OnCalendar=4,16,21:49:00
 AccuracySec=10m
 Persistent=true
 
