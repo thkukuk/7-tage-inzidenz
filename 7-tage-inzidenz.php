@@ -165,6 +165,9 @@ echo "<!DOCTYPE html>
     .tooltip .tooltiptext {
       visibility: hidden;
       width: 50px;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -25px; /* Use half of the width (50/2 = 25), to center the tooltip */
       background-color: black;
       color: #fff;
       text-align: center;
@@ -257,16 +260,16 @@ function drawWidget($id, $past_days, $vaccination)
     drawStoplight($today['Inz7T']);
 
     echo "<table class='tbl_incidence'>";
-    printEntry($today, 1, 1, $vacc);
+    printEntry($today, 1, 1, $vacc, $vaccination['ts']);
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        printEntry($day, 0, 0, NULL);
+        printEntry($day, 0, 0, NULL, NULL);
     }
 
     # Zeige 7-Tage-Inzidenz vom Bundesland
     if ($today_bl) {
         echo "<tr><th colspan='2'>" . $today_bl['GEN'] . "</th></tr>";
-        printEntry($today_bl, 0, 1, $vaccination['states'][$today_bl['GEN']]);
+        printEntry($today_bl, 0, 1, $vaccination['states'][$today_bl['GEN']], $vaccination['ts']);
     }
     echo "</table>";
     echo "</div>";
@@ -306,7 +309,7 @@ function printColorInz7T($data, $trend)
     }
 }
 
-function printEntry($data, $main, $trend, $vaccination)
+function printEntry($data, $main, $trend, $vaccination, $ts)
 {
     if ($data) {
 
@@ -358,10 +361,12 @@ function printEntry($data, $main, $trend, $vaccination)
         if ($vaccination) {
 	    echo "<tr>
 	            <td class='" . $class_t . "'>Impfquote:</td>
-	            <td class='" . $class_n . "'>"
+	            <td class='" . $class_n . "'><div class='tooltip'>"
 	                . $vaccination['quote'] . "% / "
 		        . $vaccination['2nd_vaccination']['quote']
-                        . "%</td>
+                        . "%<span class='tooltiptext'>"
+			. date("d.m.", $ts)
+			. "</span></div></td>
 		  </tr>";
 	}
     }
