@@ -345,9 +345,7 @@ function printEntry($data, $main, $trend, $vaccination, $ts)
 	$new = $data['AnzFallNeu'];
         if ($new > 0) {
 	    echo "+";
-	} else if ($new < 0) {
-	    echo "-";
-        }
+	}
         echo number_format($new, 0, ",", ".") . ")</td></tr>";
 
         if ($main) {
