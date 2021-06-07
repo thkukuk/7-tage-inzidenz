@@ -1,6 +1,7 @@
 <?php
 include('lib/RKI_Corona_Data.php');
 include('lib/RKI_Vaccination.php');
+include('lib/Mobile_Detect.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
@@ -24,9 +25,17 @@ $past_days=getenv("PAST_DAYS");
 if (!$past_days) {
   $past_days="7";
 }
-$max_cols=GETENV("MAX_COLS");
-if (!$max_cols) {
-  $max_cols="5";
+
+$browser = new Mobile_Detect;
+if ($browser->isTablet()) {
+  $max_cols="3";
+} else if ($browser->isMobile()) {
+  $max_cols="1";
+} else {
+  $max_cols=GETENV("MAX_COLS");
+  if (!$max_cols) {
+    $max_cols="5";
+  }
 }
 
 $vaccination_class = new RKI_Vaccination($cache_dir);

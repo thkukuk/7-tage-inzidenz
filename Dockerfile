@@ -1,3 +1,8 @@
+FROM registry.opensuse.org/opensuse/tumbleweed:latest AS build-stage
+RUN zypper install --no-recommends git
+RUN git clone https://github.com/serbanghita/Mobile-Detect.git
+RUN sed -i -e 's/|CMR-AL19/|CMR-AL19|CMR-W09/g' Mobile-Detect/Mobile_Detect.php
+
 FROM registry.opensuse.org/opensuse/php8-nginx:latest
 LABEL maintainer="Thorsten Kukuk <kukuk@thkukuk.de>"
 
@@ -6,6 +11,7 @@ LABEL org.opencontainers.image.description="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
 LABEL org.opencontainers.image.version="2.9"
 
+COPY --from=build-stage /Mobile-Detect/Mobile_Detect.php /srv/www/htdocs/lib/
 COPY lib/ /srv/www/htdocs/lib/
 COPY 7-tage-inzidenz.php vaccination.php index.html /srv/www/htdocs/
 COPY update-data.php /usr/local/bin/update-data
