@@ -243,7 +243,7 @@ function drawWidget($id, $past_days, $vaccination)
 	$start_past = 2;
     }
 
-    if  ($today['BundeslandId'] != '0') {
+    if ($today['BundeslandId'] != '0' AND $today['BundeslandId'] != $today['AdmUnitId']) {
         $incidence_bl = new RKI_Corona_Data($today['BundeslandId'], $cache_dir);
 	$today_bl = $incidence_bl->getDaily(0);
         if (!$today_bl) {
