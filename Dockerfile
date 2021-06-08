@@ -1,5 +1,5 @@
 FROM registry.opensuse.org/opensuse/tumbleweed:latest AS build-stage
-RUN zypper install --no-recommends git
+RUN zypper install --no-recommends --auto-agree-with-product-licenses -y git
 RUN git clone https://github.com/serbanghita/Mobile-Detect.git
 RUN sed -i -e 's/|CMR-AL19/|CMR-AL19|CMR-W09/g' Mobile-Detect/Mobile_Detect.php
 
