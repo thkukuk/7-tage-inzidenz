@@ -117,9 +117,9 @@ echo "</html>";
 ### Functions ###
 
 function printColPercNr($quote) {
-    if ($quote >= 70) {
+    if ($quote >= 85) {
         $color = "quote_good";
-    } else if ($quote >= 50) {
+    } else if ($quote >= 70) {
         $color = "quote_medium";
     } else {
         $color = "quote_low";
