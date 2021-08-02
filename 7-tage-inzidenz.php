@@ -253,12 +253,14 @@ function drawWidget($id, $past_days, $vaccination)
 
     # If the big widget is a "Bundesland" or "Germany", show
     # vaccination status
-    if ($id == 0) {
-        $vacc = $vaccination;
-    } else if ($id <= 16) {
-        $vacc = $vaccination['states'][$today['GEN']];
-    } else {
-        $vacc = NULL;
+    $vacc = NULL;
+    if ($id <= 16) {
+        foreach($vaccination['data'] as $state) {
+            if ( $state['name'] == $today['GEN']) {
+	      $vacc = $state;
+            }
+	}
+	unset($state);
     }
 
     echo "<div class='widget'>";
@@ -278,7 +280,14 @@ function drawWidget($id, $past_days, $vaccination)
     # Zeige 7-Tage-Inzidenz vom Bundesland
     if ($today_bl) {
         echo "<tr><th colspan='2'>" . $today_bl['GEN'] . "</th></tr>";
-        printEntry($today_bl, 0, 1, $vaccination['states'][$today_bl['GEN']], $vaccination['ts']);
+	$vacc = NULL;
+        foreach($vaccination['data'] as $state) {
+            if ( $state['name'] == $today_bl['GEN']) {
+	      $vacc = $state;
+            }
+	}
+        printEntry($today_bl, 0, 1, $vacc, $vaccination['ts']);
+	unset($state);
     }
     echo "</table>";
     echo "</div>";
@@ -369,8 +378,8 @@ function printEntry($data, $main, $trend, $vaccination, $ts)
 	    echo "<tr>
 	            <td class='" . $class_t . "'>Impfquote:</td>
 	            <td class='" . $class_n . "'><div class='tooltip'>"
-	                . $vaccination['quote'] . "% / "
-		        . $vaccination['2nd_vaccination']['quote']
+	                . $vaccination['vaccinatedAtLeastOnce']['quote'] . "% / "
+		        . $vaccination['fullyVaccinated']['quote']
                         . "%<span class='tooltiptext'>"
 			. date("d.m.", $ts)
 			. "</span></div></td>
