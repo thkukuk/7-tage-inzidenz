@@ -30,14 +30,16 @@ foreach($reg_arr as $reg) {
     $data = $incidence->getDaily(0);
     if (!$data) {
         echo "Keine neuen Daten für Region " . $reg . " vom "
-	     . $dt . "gefunden\n";
-    }
-    if  ($data['BundeslandId'] != '0') {
-        $incidence_bl = new RKI_Corona_Data($data['BundeslandId'], $cache_dir);
-        $data_bl = $incidence_bl->getDaily(0);
-        if (!$data_bl) {
-            echo "Keine neuen Daten für Region " . $reg . " vom "
-	         . $dt . "gefunden\n";
+	     . $dt . " gefunden\n";
+    } else {
+        if  ($data['BundeslandId'] != '0') {
+            $incidence_bl = new RKI_Corona_Data($data['BundeslandId'],
+	                                        $cache_dir);
+            $data_bl = $incidence_bl->getDaily(0);
+            if (!$data_bl) {
+                echo "Keine neuen Daten für Region " . $reg . " vom "
+	             . $dt . "gefunden\n";
+            }
         }
     }
 }
