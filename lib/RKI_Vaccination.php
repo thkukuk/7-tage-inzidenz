@@ -1,6 +1,6 @@
 <?php
 
-# https://rki-vaccination-data.vercel.app/api
+# https://rki-vaccination-data.vercel.app/api/v2
 
 class RKI_Vaccination
 {
@@ -10,7 +10,7 @@ class RKI_Vaccination
 
     public function __construct(string $cache_dir)
     {
-        $this->cache_file = $cache_dir . '/vaccination.json';
+        $this->cache_file = $cache_dir . '/vaccination-apiv2.json';
     }
 
     # get the latest data, independent how old they are.
@@ -80,7 +80,7 @@ class RKI_Vaccination
         curl_setopt(
             $c,
             CURLOPT_URL,
-	    'https://rki-vaccination-data.vercel.app/api'
+	    'https://rki-vaccination-data.vercel.app/api/v2'
         );
 
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
@@ -99,7 +99,7 @@ class RKI_Vaccination
             $data['ts'] = $date->format("U");
 	    # RKI does not provides the quote for 2nd vaccination for
 	    # whole germany, calculate it our own.
-            $data['2nd_vaccination']['quote'] = round(($data['2nd_vaccination']['vaccinated']/$data['total']*100), 2);
+            #$data['2nd_vaccination']['quote'] = round(($data['2nd_vaccination']['vaccinated']/$data['total']*100), 2);
 	    # update cache, in worst case we overwrite the same
 	    # values...
 	    $this->setCache($data);
