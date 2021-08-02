@@ -4,25 +4,6 @@ include('lib/RKI_Vaccination.php');
 ### Global configuration ###
 $cache_dir = '/data';
 
-$states = [
-	'Baden-Württemberg',
-	'Bayern',
-	'Berlin',
-	'Brandenburg',
-	'Bremen',
-	'Hamburg',
-	'Hessen',
-	'Mecklenburg-Vorpommern',
-	'Niedersachsen',
-	'Nordrhein-Westfalen',
-	'Rheinland-Pfalz',
-	'Saarland',
-	'Sachsen',
-	'Sachsen-Anhalt',
-	'Schleswig-Holstein',
-	'Thüringen'
-	];
-
 ### Main ###
 
 $vaccination = new RKI_Vaccination($cache_dir);
@@ -90,22 +71,33 @@ echo "  <tr>";
 echo "    <th>&nbsp;</th><th>1./2. Impfung</th><th>Gesamt 1.</th><th>Neu 1.</th><th>Gesamt 2.</th><th>Neu 2.</th><th>Einwohner</th><th>Performance</th>";
 echo "  </tr>";
 
-printEntry("Deutschland", $data, "-");
+foreach($data['data'] as $state) {
+    if ( $state['name'] == 'Deutschland') {
+        printEntry("Deutschland", $state, "-");
+    }
+}
+unset ($state);
 
 $performance = array();
-foreach($states as $state) {
-  $performance[$state] =
-      $data['states'][$state]['quote'] +
-      $data['states'][$state]['2nd_vaccination']['quote'];
+foreach($data['data'] as $state) {
+    if ($state['isState']) {
+        $performance[$state['name']] =
+            $state['vaccinatedAtLeastOnce']['quote'] +
+            $state['fullyVaccinated']['quote'];
+    }
 }
+unset ($state);
+
 array_multisort($performance, SORT_DESC, $performance);
 $i=0;
 foreach ($performance as $state => $value) {
     $performance[$state] = ++$i;
 }
 
-foreach($states as $state) {
-    printEntry($state, $data['states'][$state], $performance[$state]);
+foreach($data['data'] as $state) {
+    if ($state['isState']) {
+        printEntry($state['name'], $state, $performance[$state['name']]);
+    }
 }
 unset ($state);
 echo "</table>\n";
@@ -133,13 +125,13 @@ function printColPercNr($quote) {
 function printEntry($state, $data, $performance)
 {
     echo "<tr><td class='text'>$state</td><td class='perc'>";
-    echo printColPercNr($data['quote']) . " / ";
-    echo printColPercNr($data['2nd_vaccination']['quote']) . "</td>";
-    echo "<td>" . number_format($data['vaccinated'], 0, ",", ".") . "</td>";
-    echo "<td> +" . number_format($data['difference_to_the_previous_day'], 0, ",", ".") . "</td>";
-    echo "<td>" . number_format($data['2nd_vaccination']['vaccinated'], 0, ",", ".") . "</td>";
-    echo "<td> +" . number_format($data['2nd_vaccination']['difference_to_the_previous_day'], 0, ",", ".") . "</td>";
-    echo "<td>" . number_format($data['total'], 0, ",", ".") . "</td>";
+    echo printColPercNr($data['vaccinatedAtLeastOnce']['quote']) . " / ";
+    echo printColPercNr($data['fullyVaccinated']['quote']) . "</td>";
+    echo "<td>" . number_format($data['vaccinatedAtLeastOnce']['doses'], 0, ",", ".") . "</td>";
+    echo "<td> +" . number_format($data['vaccinatedAtLeastOnce']['differenceToThePreviousDay'], 0, ",", ".") . "</td>";
+    echo "<td>" . number_format($data['fullyVaccinated']['doses'], 0, ",", ".") . "</td>";
+    echo "<td> +" . number_format($data['fullyVaccinated']['differenceToThePreviousDay'], 0, ",", ".") . "</td>";
+    echo "<td>" . number_format($data['inhabitants'], 0, ",", ".") . "</td>";
     echo "<td class='perf'>" . $performance . "</td>";
     echo "</tr>";
 }
