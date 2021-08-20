@@ -8,7 +8,7 @@ include('lib/Mobile_Detect.php');
 
 ### Global configuration ###
 $cache_dir = '/data';
-$threshold_green = 50;
+$threshold_green = 35;
 $threshold_yellow = 100;
 $threshold_red = 150;
 
@@ -399,7 +399,7 @@ function drawStoplight($cases7_per_100k)
         $text = "Geöffnet";
     } else if ($cases7_per_100k < $threshold_yellow) {
         $color = "stoplight_risk";
-        $text = "Click&Meet";
+        $text = "Geöffnet (3G)";
     } else if ($cases7_per_100k < $threshold_red) {
         $color = "stoplight_stop";
         $text = "Mit Schnelltest";
