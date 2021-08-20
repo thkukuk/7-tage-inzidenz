@@ -9,7 +9,7 @@ LABEL maintainer="Thorsten Kukuk <kukuk@thkukuk.de>"
 LABEL org.opencontainers.image.title="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.description="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
-LABEL org.opencontainers.image.version="3.0"
+LABEL org.opencontainers.image.version="3.1"
 
 COPY --from=build-stage /Mobile-Detect/Mobile_Detect.php /srv/www/htdocs/lib/
 COPY lib/ /srv/www/htdocs/lib/
