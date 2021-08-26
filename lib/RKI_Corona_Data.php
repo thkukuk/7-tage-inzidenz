@@ -56,6 +56,18 @@ class RKI_Corona_Data
         }
     }
 
+    public function getDailyNoCache($offset = 0)
+    {
+        $d = new DateTime("today -" . $offset . " day");
+        $dt = $d->format('Ymd');
+
+        $c = $this->fetchData($dt);
+        if (is_array($c)) {
+            $c['cached'] = false;
+            return $c;
+        }
+    }
+
     private function getCache(string $dt)
     {
         $f = @file_get_contents($this->cache_file);
