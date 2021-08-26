@@ -9,8 +9,8 @@ include('lib/Mobile_Detect.php');
 ### Global configuration ###
 $cache_dir = '/data';
 $threshold_green = 35;
-$threshold_yellow = 100;
-$threshold_red = 150;
+$threshold_yellow = 50;
+$threshold_red = 100;
 
 ### Main ###
 
@@ -134,11 +134,11 @@ echo "<!DOCTYPE html>
     }
 
     .stoplight_fullstop {
-        background-color: darkred;
+        background-color: #ff0028;
     }
 
     .stoplight_stop {
-        background-color: #ff0028;
+        background-color: darkorange;
     }
 
     .stoplight_risk {
@@ -150,11 +150,11 @@ echo "<!DOCTYPE html>
     }
 
     .value_fullstop {
-        color: darkred;
+        color: #dc143c;
     }
 
     .value_stop {
-        color: #dc143c;
+        color: orange;
     }
 
     .value_risk {
@@ -402,10 +402,10 @@ function drawStoplight($cases7_per_100k)
         $text = "Geöffnet (3G)";
     } else if ($cases7_per_100k < $threshold_red) {
         $color = "stoplight_stop";
-        $text = "Mit Schnelltest";
+        $text = "Geöffnet (3G)";
     } else {
         $color = "stoplight_fullstop";
-        $text = "Geschlossen";
+        $text = "Geöffnet (3G)";
     }
     echo "<div class='stoplight " . $color . "'>";
     echo $text;
