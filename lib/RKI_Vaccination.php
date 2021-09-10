@@ -20,19 +20,19 @@ class RKI_Vaccination
 	# not published daily...
         if (!$this->updated) {
             $data = $this->fetchData();
-            if ($data) {
+            if (is_array($data)) {
 	        $this->updated = 1;
                 return $data;
             }
-	} else {
-            for ($offset = 0; $offset < 10; $offset++) {
-                $d = new DateTime("today -" . $offset . " day");
-                $dt = $d->format('Ymd');
+	}
 
-                $data = $this->getCache($dt);
-                if ($data) {
-                    return $data;
-		}
+	for ($offset = 0; $offset < 10; $offset++) {
+            $d = new DateTime("today -" . $offset . " day");
+            $dt = $d->format('Ymd');
+
+            $data = $this->getCache($dt);
+            if ($data) {
+                return $data;
             }
 	}
     }
