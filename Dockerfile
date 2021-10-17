@@ -9,11 +9,11 @@ LABEL maintainer="Thorsten Kukuk <kukuk@thkukuk.de>"
 LABEL org.opencontainers.image.title="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.description="7-Tage-Inzidenz Container"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
-LABEL org.opencontainers.image.version="3.3"
+LABEL org.opencontainers.image.version="4.0"
 
 COPY --from=build-stage /Mobile-Detect/Mobile_Detect.php /srv/www/htdocs/lib/
 COPY lib/ /srv/www/htdocs/lib/
-COPY 7-tage-inzidenz.php vaccination.php index.html /srv/www/htdocs/
+COPY 7-tage-inzidenz.php 7-tage-inzidenz-ampel.php vaccination.php index.html /srv/www/htdocs/
 COPY update-data.php /usr/local/bin/update-data
 COPY 10-set-TZ.sh 60-set-php-env.sh 80-fix-data-permissions.sh /docker-entrypoint.d/
 
