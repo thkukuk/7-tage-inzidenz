@@ -102,7 +102,7 @@ foreach($data['data'] as $state) {
 unset ($state);
 echo "</table>\n";
 echo "Status vom " . date("d.m.Y", $data['ts']) . "<br>\n";
-echo "Quelle: <a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a>";
+echo "Quelle: <a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a> / <a href='https://rki-vaccination-data.vercel.app'>https://rki-vaccination-data.vercel.app</a>";
 echo "</body>";
 echo "</html>";
 
