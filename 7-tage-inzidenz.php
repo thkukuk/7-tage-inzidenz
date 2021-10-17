@@ -8,8 +8,7 @@ include('lib/Mobile_Detect.php');
 
 ### Global configuration ###
 $cache_dir = '/data';
-$threshold_green = 35;
-$threshold_yellow = 50;
+$threshold_yellow = 35;
 $threshold_red = 100;
 
 ### Main ###
@@ -17,25 +16,13 @@ $threshold_red = 100;
 $regions=getenv("REGIONS");
 if (!$regions) {
   # if no region is specified, use Germany
-  $regions="0";
+  $regions="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16";
 }
 $reg_arr = explode(',', $regions);
 
 $past_days=getenv("PAST_DAYS");
 if (!$past_days) {
   $past_days="7";
-}
-
-$browser = new Mobile_Detect;
-if ($browser->isTablet()) {
-  $max_cols="3";
-} else if ($browser->isMobile()) {
-  $max_cols="1";
-} else {
-  $max_cols=GETENV("MAX_COLS");
-  if (!$max_cols) {
-    $max_cols="5";
-  }
 }
 
 $vaccination_class = new RKI_Vaccination($cache_dir);
@@ -52,118 +39,50 @@ echo "<!DOCTYPE html>
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    h3 {
-        text-align: center;
-        margin: 1%;
+    table {
+      border-collapse: collapse;
+      border: thin solid #ddd;
+      /* width: 100%; */
     }
 
-    h6 {
-        text-align: center;
-        margin: 1%;
-        font-size: 0.5em;
+    td {
+      border: thin solid #ddd;
+      padding: 5px;
+      text-align: right;
     }
 
-    .widget {
-        width: 285px;
-        border: thin solid #ddd;
-        min-height: 200px;
-    }
+td.text { text-align: left; }
+th.text { text-align: left; }
+td.inzidenz { text-align: center; }
+td.perf { text-align: center; }
+td.number { text-align: right; }
 
-    table.tbl_incidence {
-        border-collapse: collapse;
-        border: thin solid #ddd;
-        width: 100%;
-    }
+tr:nth-child(odd){background-color: #f2f2f2;}
 
-    table.tbl_incidence th {
-        width: 50%;
-	border-top: thin solid #ddd;
-	text-align: center;
-        font-size: 1.2em;
-    }
+tr:hover {background-color: #ddd;}
 
-    table.tbl_incidence td {
-        width: 50%;
-	border-top: thin solid #ddd;
-    }
+th {
+  border: 1px solid #ddd;
+  padding: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  background-color: grey;
+  color: white;
+}
 
-    table.tbl_incidence tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
+.value_red {
+  color: #dc143c;
+}
 
-    table.tbl_incidence tr:hover {
-        background-color: #ddd;
-    }
 
-    td.tbl_top {
-        vertical-align: top;
-    }
+.value_yellow {
+  color: #b8b800;
+}
 
-    td.left {
-        width: 50%;
-	text-align: left;
-    }
-
-    td.right {
-        width: 50%;
-	text-align: right;
-    }
-
-    td.small_left {
-        width: 50%;
-	text-align: left;
-	font-size: 0.9em;
-    }
-
-    td.small_right {
-        width: 50%;
-	text-align: right;
-	font-size: 0.9em;
-    }
-
-    div.stoplight {
-        /* margin-top: 5%; */
-        /* margin-bottom: 5%; */
-        padding-top: 5%;
-        width: 100%;
-        height: 40px;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 1.5em;
-        color: #ccc;
-    }
-
-    .stoplight_fullstop {
-        background-color: #ff0028;
-    }
-
-    .stoplight_stop {
-        background-color: darkorange;
-    }
-
-    .stoplight_risk {
-        background-color: yellow;
-    }
-
-    .stoplight_ok {
-        background-color: green;
-    }
-
-    .value_fullstop {
-        color: #dc143c;
-    }
-
-    .value_stop {
-        color: orange;
-    }
-
-    .value_risk {
-        color: #b8b800;
-    }
-
-    .value_ok {
-        color: green;
-    }
+.value_green {
+  color: green;
+}
 
     .tooltip {
       position: relative;
@@ -195,34 +114,51 @@ echo "<!DOCTYPE html>
     </style>
   </head>
   <body>";
-echo "    <table>";
-echo "      <tr>";
+
+    echo "<h1>7-Tage Inzidenz";
+
+    # if we don't have data for today, start with yesterdays data as current
+    # ones.
+    $start_past = 1;
+
+    $incidence = new RKI_Corona_Data(0, $cache_dir);
+
+    $today = $incidence->getDaily(0);
+    if (!$today) {
+        $today = $incidence->getDaily(1);
+	if ($today) {
+            $start_past = 2;
+	}
+    }
+
+    echo " - " . germanDay($today['ts']) . ", " . date("d.m.Y", $today['ts']) . "</h1>";
+    echo "<table>";
+    echo "  <tr>";
+    echo "    <th class='text'>Region</th><th>Inzidenz</th><th>Fälle insgesamt</th><th>Tote</th><th>Impfquote</th>";
+    for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
+        $day = $incidence->getDaily($i);
+	if ($day) {
+	    echo "<th>" . germanDayAbbr($day['ts']) . ", " . date("d.m.", $day['ts']) . "</th>";
+	} else {
+	    echo "<th>&nbsp;</th>";
+	}
+    }
+    echo "  </tr>";
 
 $cols = 0;
 foreach($reg_arr as $reg) {
-    $cols++;
-    echo "      <td class='tbl_top'>";
-    drawWidget($reg, $past_days, $vaccination);
-    echo "      </td>";
-    if ($cols == $max_cols) {
-        echo "    </tr><tr>";
-	$cols = 0;
-    }
+    PrintRegion($reg, $start_past, $past_days, $vaccination);
 }
 unset ($reg);
-for ($i = $cols+1; $i <= $max_cols; $i++) {
-    echo "<td>&nbsp;</td>";
-}
-echo "</tr><tr>";
-echo "<td colspan='" . $max_cols . "'>Quelle: <a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a><br>Source Code: <a href='https://github.com/thkukuk/7-tage-inzidenz'>https://github.com/thkukuk/7-tage-inzidenz</a></td>";
-echo "  </tr>";
-echo "</table>";
+
+echo "</table>\n";
+echo "<a href='https://www.rki.de/DE/Home/homepage_node.html'>RKI</a><br>Source Code: <a href='https://github.com/thkukuk/7-tage-inzidenz'>https://github.com/thkukuk/7-tage-inzidenz</a>";
 echo "</body>";
 echo "</html>";
 
 ### Functions ###
 
-function drawWidget($id, $past_days, $vaccination)
+function PrintRegion($id, $start_past, $past_days, $vaccination)
 {
     global $cache_dir;
 
@@ -251,7 +187,7 @@ function drawWidget($id, $past_days, $vaccination)
 	}
     }
 
-    # If the big widget is a "Bundesland" or "Germany", show
+    # If the region is a "Bundesland" or "Germany", show
     # vaccination status
     $vacc = NULL;
     if ($id <= 16) {
@@ -263,51 +199,55 @@ function drawWidget($id, $past_days, $vaccination)
 	unset($state);
     }
 
-    echo "<div class='widget'>";
+    echo "<tr><td class='text'>" . $today['GEN'] . "</td><td class='inzidenz'>";
+    printColorInz7T($today, 1);
+    echo "</td><td class='number'>";
+    echo number_format($today['AnzFall'], 0, ",", ".") . " (";
+    $new = $today['AnzFallNeu'];
+    if ($new > 0) {
+        echo "+";
+    }
+    echo number_format($new, 0, ",", ".") . ")</td>";
+    echo "<td class='number'>"
+         . number_format($today['AnzTodesfall'], 0, ",", ".")
+         . " (+" . number_format($today['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
 
-    echo "<h3>Inzidenz für " . $today['GEN'] . "</h3>";
-    echo "<h6>(Fälle pro 100.000 Einwohner in 7 Tagen)</h6>";
-
-    drawStoplight($today['Inz7T']);
-
-    echo "<table class='tbl_incidence'>";
-    printEntry($today, 1, 1, $vacc, $vaccination['ts']);
+    if ($vacc) {
+         echo "<td class='perf'><div class='tooltip'>"
+	            . $vacc['vaccinatedAtLeastOnce']['quote'] . "% / "
+		    . $vacc['fullyVaccinated']['quote']
+                    . "%<span class='tooltiptext'>"
+		    . date("d.m.", $vaccination['ts'])
+		    . "</span></div>
+		  </td>";
+    } else {
+        echo "<td>&nbsp;</td>";
+    }
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        printEntry($day, 0, 0, NULL, NULL);
-    }
-
-    # Zeige 7-Tage-Inzidenz vom Bundesland
-    if ($today_bl) {
-        echo "<tr><th colspan='2'>" . $today_bl['GEN'] . "</th></tr>";
-	$vacc = NULL;
-        foreach($vaccination['data'] as $state) {
-            if ( $state['name'] == $today_bl['GEN']) {
-	      $vacc = $state;
-            }
+	if ($day) {
+	    echo "<td>";
+	    printColorInz7T($day, 0);
+            echo "</td>";
+	} else {
+	    echo "<td>&nbsp;</td>";
 	}
-        printEntry($today_bl, 0, 1, $vacc, $vaccination['ts']);
-	unset($state);
     }
-    echo "</table>";
-    echo "</div>";
+    echo "</tr>";
 }
 
 function printColorInz7T($data, $trend)
 {
-    global $threshold_green;
     global $threshold_yellow;
     global $threshold_red;
 
     $inc = round($data['Inz7T'], 2);
-    if ($inc < $threshold_green) {
-        $co = "value_ok";
-    } else if ($inc < $threshold_yellow) {
-        $co = "value_risk";
-    } else if ($inc < $threshold_red) {
-        $co = "value_stop";
+    if ($inc >= $threshold_red) {
+        $co = "value_red";
+    } else if ($inc >= $threshold_yellow) {
+        $co = "value_yellow";
     } else {
-        $co = "value_fullstop";
+        $co = "value_green";
     }
 
     echo "<span class='" . $co . "'>&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -325,91 +265,6 @@ function printColorInz7T($data, $trend)
 	       . number_format($data['trendSlope'], 2, ",", ".")
 	       . "</span></div>";
     }
-}
-
-function printEntry($data, $main, $trend, $vaccination, $ts)
-{
-    if ($data) {
-
-        echo "<tr>\n";
-	if ($main) {
-	    echo " <th>" . germanDay($data['ts']);
-	} else {
-	    echo " <td class='small_left'>" . germanDayAbbr($data['ts']);
-	}
-        echo ", " . date("d.m.Y", $data['ts']);
-	if ($main) {
-	    echo "</th><th>";
-	    printColorInz7T($data, $trend);
-	    echo "</th>";
-	} else {
-	    echo "</td><td class='small_right'>";
-	    printColorInz7T($data, $trend);
-	    echo "</td>";
-	}
-        echo "</tr>";
-
-	if ($main) {
-	    $class_t = "left";
-	    $class_n = "right";
-	} else {
-	    $class_t = "small_left";
-	    $class_n = "small_right";
-	}
-    	echo "<tr>
-	       <td class='" . $class_t . "'>Fälle insgesamt:</td>
-               <td class='" . $class_n . "'>";
-        echo number_format($data['AnzFall'], 0, ",", ".") . " (";
-	$new = $data['AnzFallNeu'];
-        if ($new > 0) {
-	    echo "+";
-	}
-        echo number_format($new, 0, ",", ".") . ")</td></tr>";
-
-        if ($main) {
-	    echo "<tr>
-	            <td class='left'>Tote:</td>
-		    <td class='right'>"
-                        . number_format($data['AnzTodesfall'], 0, ",", ".")
-		        . " (+" . number_format($data['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
-            echo "</tr>";
-	}
-        if ($vaccination) {
-	    echo "<tr>
-	            <td class='" . $class_t . "'>Impfquote:</td>
-	            <td class='" . $class_n . "'><div class='tooltip'>"
-	                . $vaccination['vaccinatedAtLeastOnce']['quote'] . "% / "
-		        . $vaccination['fullyVaccinated']['quote']
-                        . "%<span class='tooltiptext'>"
-			. date("d.m.", $ts)
-			. "</span></div></td>
-		  </tr>";
-	}
-    }
-}
-
-function drawStoplight($cases7_per_100k)
-{
-    global $threshold_green;
-    global $threshold_yellow;
-    global $threshold_red;
-
-    if ($cases7_per_100k < $threshold_green) {
-        $color = "stoplight_ok";
-        $text = "Geöffnet";
-    } else if ($cases7_per_100k < $threshold_yellow) {
-        $color = "stoplight_risk";
-        $text = "Geöffnet (3G)";
-    } else if ($cases7_per_100k < $threshold_red) {
-        $color = "stoplight_stop";
-        $text = "Geöffnet (3G)";
-    } else {
-        $color = "stoplight_fullstop";
-        $text = "Geöffnet (3G)";
-    }
-    echo "<div class='stoplight " . $color . "'>";
-    echo $text;
-    echo "</div>\n";
 }
 
 function germanDay($ts)
