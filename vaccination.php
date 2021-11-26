@@ -68,7 +68,7 @@ th {
 echo "<h1>Gegen Corona geimpfte Personen in Deutschland</h1>\n";
 echo "<table>";
 echo "  <tr>";
-echo "    <th>&nbsp;</th><th>1./2. Impfung</th><th>Gesamt 1.</th><th>Neu 1.</th><th>Gesamt 2.</th><th>Neu 2.</th><th>Einwohner</th><th>Performance</th>";
+echo "    <th>&nbsp;</th><th>1./2./3. Impfung</th><th>Gesamt 1.</th><th>Neu 1.</th><th>Gesamt 2.</th><th>Neu 2.</th><th>Gesamt 3.</th><th>Neu 3.</th><th>Einwohner</th><th>Performance</th>";
 echo "  </tr>";
 
 foreach($data['data'] as $state) {
@@ -126,11 +126,14 @@ function printEntry($state, $data, $performance)
 {
     echo "<tr><td class='text'>$state</td><td class='perc'>";
     echo printColPercNr($data['vaccinatedAtLeastOnce']['quote']) . " / ";
-    echo printColPercNr($data['fullyVaccinated']['quote']) . "</td>";
+    echo printColPercNr($data['fullyVaccinated']['quote']) . " / ";
+    echo printColPercNr($data['boosterVaccinated']['quote']) . "</td>";
     echo "<td>" . number_format($data['vaccinatedAtLeastOnce']['doses'], 0, ",", ".") . "</td>";
     echo "<td> +" . number_format($data['vaccinatedAtLeastOnce']['differenceToThePreviousDay'], 0, ",", ".") . "</td>";
     echo "<td>" . number_format($data['fullyVaccinated']['doses'], 0, ",", ".") . "</td>";
     echo "<td> +" . number_format($data['fullyVaccinated']['differenceToThePreviousDay'], 0, ",", ".") . "</td>";
+    echo "<td>" . number_format($data['boosterVaccinated']['doses'], 0, ",", ".") . "</td>";
+    echo "<td> +" . number_format($data['boosterVaccinated']['differenceToThePreviousDay'], 0, ",", ".") . "</td>";
     echo "<td>" . number_format($data['inhabitants'], 0, ",", ".") . "</td>";
     echo "<td class='perf'>" . $performance . "</td>";
     echo "</tr>";
