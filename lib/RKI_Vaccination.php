@@ -20,7 +20,7 @@ class RKI_Vaccination
 	# not published daily...
         if (!$this->updated) {
             $data = $this->fetchData();
-            if (is_array($data)) {
+            if (is_array($data) AND array_key_exists('lastUpdate', $data)) {
 	        $this->updated = 1;
                 return $data;
             }
@@ -93,7 +93,7 @@ class RKI_Vaccination
 
         $data = json_decode($result, true);
 
-        if (is_array($data)) {
+        if (is_array($data) AND array_key_exists('lastUpdate', $data)) {
 	    # Create some fields to make usage easier
 	    $date = DateTime::createFromFormat("Y-m-d H:i:s", str_replace("T", " ", $data['lastUpdate']));
             $data['ts'] = $date->format("U");
