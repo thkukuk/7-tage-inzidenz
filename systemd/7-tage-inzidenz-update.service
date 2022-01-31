@@ -3,11 +3,12 @@ Description=Update 7-Tage-Inzidenz (Corona) database
 Documentation=https://github.com/thkukuk/7-tage-inzidenz-image#readme
 After=network-online.target local-fs.target firewalld.service
 Wants=network-online.target
+StartLimitIntervalSec=40
+StartLimitBurst=5
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
 RestartSec=1s
-StartLimitBurst=5
 TimeoutStopSec=70
 EnvironmentFile=-/usr/etc/default/7-tage-inzidenz
 EnvironmentFile=-/etc/default/7-tage-inzidenz
