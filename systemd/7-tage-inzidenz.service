@@ -18,7 +18,7 @@ ExecStartPre=-/usr/bin/podman pull thkukuk/7-tage-inzidenz:latest
 ExecStart=/bin/sh -c "/usr/bin/podman run --conmon-pidfile %t/%n.pid --cidfile %t/%n.ctr-id --cgroups=no-conmon --replace -d --rm ${PODMAN_EXTRA_ARGS} ${PORTS} ${VOLUMES} -e TZ=${TZ} -e DEBUG=${DEBUG} -e REGIONS=${REGIONS} -e PAST_DAYS=${PAST_DAYS} --name 7-tage-inzidenz thkukuk/7-tage-inzidenz:latest"
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.ctr-id -t 10
 ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/%n.ctr-id
-Type=forking
+Type=notify
 PIDFile=%t/%n.pid
 
 [Install]
