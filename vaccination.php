@@ -83,7 +83,8 @@ foreach($data['data'] as $state) {
     if ($state['isState']) {
         $performance[$state['name']] =
             $state['vaccinatedAtLeastOnce']['quote'] +
-            $state['fullyVaccinated']['quote'];
+            $state['fullyVaccinated']['quote'] + 
+            $state['boosterVaccinated']['quote'];
     }
 }
 unset ($state);
