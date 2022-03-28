@@ -222,19 +222,19 @@ class RKI_Corona_Data
         $x = [];
 	$y = [];
 
-        # use all available 7-day incidies from the last 7 days
-        for($i = 7; $i > 0; $i--) {
+        # use all available 7-day incidies from the last 5 days
+        for($i = 5; $i > 0; $i--) {
             $d = new DateTime("today -" . $i . " day");
             $dt = $d->format('Ymd');
 
 	    $data = $this->getCache($dt);
 	    if ($data) {
-	        $x[] = 8 - $i;
+	        $x[] = 6 - $i;
 	        $y[] = $data['Inz7T'];
 	    }
 	}
 	# Add 7-day incidies from today
-        $x[] = 8;
+        $x[] = 6;
 	$y[] = $currInt7T;
 	return $this->linear_regression($x, $y);
     }
