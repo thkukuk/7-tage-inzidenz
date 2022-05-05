@@ -1,6 +1,5 @@
 <?php
 include('lib/RKI_Corona_Data.php');
-include('lib/RKI_Vaccination.php');
 include('lib/Mobile_Detect.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
@@ -24,9 +23,6 @@ $past_days=getenv("PAST_DAYS");
 if (!$past_days) {
   $past_days="7";
 }
-
-$vaccination_class = new RKI_Vaccination($cache_dir);
-$vaccination = $vaccination_class->getCurrent();
 
 echo "<!DOCTYPE html>
 <html lang='de'>
@@ -134,7 +130,7 @@ th {
     echo " - " . germanDay($today['ts']) . ", " . date("d.m.Y", $today['ts']) . "</h1>";
     echo "<table>";
     echo "  <tr>";
-    echo "    <th class='text'>Region</th><th>Inzidenz</th><th>Fälle insgesamt</th><th>Tote</th><th>Impfquote</th>";
+    echo "    <th class='text'>Region</th><th>Inzidenz</th><th>Fälle insgesamt</th><th>Tote</th>";
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
 	if ($day) {
@@ -147,7 +143,7 @@ th {
 
 $cols = 0;
 foreach($reg_arr as $reg) {
-    PrintRegion($reg, $start_past, $past_days, $vaccination);
+    PrintRegion($reg, $start_past, $past_days);
 }
 unset ($reg);
 
@@ -158,7 +154,7 @@ echo "</html>";
 
 ### Functions ###
 
-function PrintRegion($id, $start_past, $past_days, $vaccination)
+function PrintRegion($id, $start_past, $past_days)
 {
     global $cache_dir;
 
@@ -187,18 +183,6 @@ function PrintRegion($id, $start_past, $past_days, $vaccination)
 	}
     }
 
-    # If the region is a "Bundesland" or "Germany", show
-    # vaccination status
-    $vacc = NULL;
-    if ($id <= 16) {
-        foreach($vaccination['data'] as $state) {
-            if ( $state['name'] == $today['GEN']) {
-	      $vacc = $state;
-            }
-	}
-	unset($state);
-    }
-
     echo "<tr><td class='text'>" . $today['GEN'] . "</td><td class='inzidenz'>";
     printColorInz7T($today, 1);
     echo "</td><td class='number'>";
@@ -212,17 +196,6 @@ function PrintRegion($id, $start_past, $past_days, $vaccination)
          . number_format($today['AnzTodesfall'], 0, ",", ".")
          . " (+" . number_format($today['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
 
-    if ($vacc) {
-         echo "<td class='perf'><div class='tooltip'>"
-	            . $vacc['vaccinatedAtLeastOnce']['quote'] . "% / "
-		    . $vacc['fullyVaccinated']['quote']
-                    . "%<span class='tooltiptext'>"
-		    . date("d.m.", $vaccination['ts'])
-		    . "</span></div>
-		  </td>";
-    } else {
-        echo "<td>&nbsp;</td>";
-    }
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
 	if ($day) {

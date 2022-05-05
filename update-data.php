@@ -1,7 +1,6 @@
 #!/usr/bin/php
 <?php
 include('lib/RKI_Corona_Data.php');
-include('lib/RKI_Vaccination.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
@@ -18,11 +17,6 @@ if (array_key_exists('f', $options)) {
 } else {
     $forced = false;
 }
-
-$vaccination_class = new RKI_Vaccination($cache_dir);
-$vaccination = $vaccination_class->getCurrent();
-
-echo "RKI Impfquoten Daten sind vom " . date("d.m.Y", $vaccination['ts']) . "\n";
 
 $regions=getenv("REGIONS");
 if (!$regions) {

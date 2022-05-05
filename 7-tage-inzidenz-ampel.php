@@ -1,6 +1,5 @@
 <?php
 include('lib/RKI_Corona_Data.php');
-include('lib/RKI_Vaccination.php');
 include('lib/Mobile_Detect.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
@@ -37,9 +36,6 @@ if ($browser->isTablet()) {
     $max_cols="5";
   }
 }
-
-$vaccination_class = new RKI_Vaccination($cache_dir);
-$vaccination = $vaccination_class->getCurrent();
 
 echo "<!DOCTYPE html>
 <html lang='de'>
@@ -202,7 +198,7 @@ $cols = 0;
 foreach($reg_arr as $reg) {
     $cols++;
     echo "      <td class='tbl_top'>";
-    drawWidget($reg, $past_days, $vaccination);
+    drawWidget($reg, $past_days);
     echo "      </td>";
     if ($cols == $max_cols) {
         echo "    </tr><tr>";
@@ -222,7 +218,7 @@ echo "</html>";
 
 ### Functions ###
 
-function drawWidget($id, $past_days, $vaccination)
+function drawWidget($id, $past_days)
 {
     global $cache_dir;
 
@@ -251,18 +247,6 @@ function drawWidget($id, $past_days, $vaccination)
 	}
     }
 
-    # If the big widget is a "Bundesland" or "Germany", show
-    # vaccination status
-    $vacc = NULL;
-    if ($id <= 16) {
-        foreach($vaccination['data'] as $state) {
-            if ( $state['name'] == $today['GEN']) {
-	      $vacc = $state;
-            }
-	}
-	unset($state);
-    }
-
     echo "<div class='widget'>";
 
     echo "<h3>Inzidenz für " . $today['GEN'] . "</h3>";
@@ -271,22 +255,16 @@ function drawWidget($id, $past_days, $vaccination)
     drawStoplight($today['Inz7T']);
 
     echo "<table class='tbl_incidence'>";
-    printEntry($today, 1, 1, $vacc, $vaccination['ts']);
+    printEntry($today, 1, 1);
     for ($i = $start_past; $i < ($start_past + $past_days); $i++) {
         $day = $incidence->getDaily($i);
-        printEntry($day, 0, 0, NULL, NULL);
+        printEntry($day, 0, 0);
     }
 
     # Zeige 7-Tage-Inzidenz vom Bundesland
     if ($today_bl) {
         echo "<tr><th colspan='2'>" . $today_bl['GEN'] . "</th></tr>";
-	$vacc = NULL;
-        foreach($vaccination['data'] as $state) {
-            if ( $state['name'] == $today_bl['GEN']) {
-	      $vacc = $state;
-            }
-	}
-        printEntry($today_bl, 0, 1, $vacc, $vaccination['ts']);
+        printEntry($today_bl, 0, 1);
 	unset($state);
     }
     echo "</table>";
@@ -327,7 +305,7 @@ function printColorInz7T($data, $trend)
     }
 }
 
-function printEntry($data, $main, $trend, $vaccination, $ts)
+function printEntry($data, $main, $trend)
 {
     if ($data) {
 
@@ -373,17 +351,6 @@ function printEntry($data, $main, $trend, $vaccination, $ts)
                         . number_format($data['AnzTodesfall'], 0, ",", ".")
 		        . " (+" . number_format($data['AnzTodesfallNeu'], 0, ",", ".") . ")</td>";
             echo "</tr>";
-	}
-        if ($vaccination) {
-	    echo "<tr>
-	            <td class='" . $class_t . "'>Impfquote:</td>
-	            <td class='" . $class_n . "'><div class='tooltip'>"
-	                . $vaccination['vaccinatedAtLeastOnce']['quote'] . "% / "
-		        . $vaccination['fullyVaccinated']['quote']
-                        . "%<span class='tooltiptext'>"
-			. date("d.m.", $ts)
-			. "</span></div></td>
-		  </tr>";
 	}
     }
 }
