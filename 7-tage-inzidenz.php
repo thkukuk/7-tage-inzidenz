@@ -1,6 +1,5 @@
 <?php
 include('lib/RKI_Corona_Data.php');
-include('lib/Mobile_Detect.php');
 
 # Find your AdmUnitID for the comma separated REGIONS list here:
 # https://www.arcgis.com/apps/mapviewer/index.html?layers=c093fe0ef8fd4707beeb3dc0c02c3381
